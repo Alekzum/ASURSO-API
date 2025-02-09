@@ -43,13 +43,13 @@ class Marks(BaseModel):
 
 
 class Subject(BaseModel):
-    final_mark: None | FinalMark = Field(default=None, alias="finalMark")
-    marks: None | Marks = None
+    final_mark: Optional[FinalMark] = Field(default=None, alias="finalMark")
+    marks: Optional[Marks] = None
     name: str
 
 
 class Attestation(BaseModel):
-    academic_years: None | List[AcademicYear] = Field(None, alias="academicYears")
+    academic_years: Optional[List[AcademicYear]] = Field(None, alias="academicYears")
     subjects: List[Subject]
 
 

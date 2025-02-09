@@ -1,25 +1,20 @@
-[project]
+[tool.poetry]
 name = "asurso-api"
 version = "0.3.0"
-description = "Just API-wrapper for https://spo.asurso.ru"
-authors = [
-    {name = "Alekzum",email = "68947902+Alekzum@users.noreply.github.com"}
-]
+description = "API-wrapper for NetSchool (ASURSO)"
+authors = ["Alekzum <68947902+Alekzum@users.noreply.github.com>"]
 readme = "README.md"
-requires-python = ">=3.13"
-dependencies = [
-    "httpx (==0.28.1)",
-    "python-dotenv (==1.0.1)",
-    "pydantic (==2.10.6)"
-]
 
-[tool.poetry]
+[tool.poetry.dependencies]
+python = "^3.8"
+httpx = "0.28.1"
+python-dotenv = "1.0.1"
+pydantic = "2.10.6"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "8.3.4"
-pytest-asyncio = "0.25.3"
-dmypy-ls = "8.3.4"
+pytest-asyncio = "0.24.0"
 
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
+requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

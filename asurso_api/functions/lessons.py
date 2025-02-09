@@ -73,9 +73,9 @@ def format(date: datetime.date) -> str:
 
 
 def resolve_edge(
-    start: datetime.datetime | None = None,
-    end: datetime.datetime | None = None,
-    offset: int | None = None,
+    start: Optional[datetime.datetime] = None,
+    end: Optional[datetime.datetime] = None,
+    offset: Optional[int] = None,
 ):
     if start is None:
         if (end is None) and (offset is None):
@@ -116,10 +116,10 @@ def resolve_edge(
 async def get_lessons_async(
     client: httpx.AsyncClient,
     SID: str,
-    start: datetime.datetime | None = None,
-    end: datetime.datetime | None = None,
-    offset: int | None = None,
-) -> list[Day]:
+    start: Optional[datetime.datetime] = None,
+    end: Optional[datetime.datetime] = None,
+    offset: Optional[int] = None,
+) -> List[Day]:
     start_, end_ = resolve_edge(start, end, offset)
 
     r = await client.get(
@@ -133,10 +133,10 @@ async def get_lessons_async(
 def get_lessons_sync(
     client: httpx.Client,
     SID: str,
-    start: datetime.datetime | None = None,
-    end: datetime.datetime | None = None,
-    offset: int | None = None,
-) -> list[Day]:
+    start: Optional[datetime.datetime] = None,
+    end: Optional[datetime.datetime] = None,
+    offset: Optional[int] = None,
+) -> List[Day]:
     start_, end_ = resolve_edge(start, end, offset)
 
     r = client.get(
@@ -150,9 +150,9 @@ def get_lessons_sync(
 class AsyncGetLessonsMethod:
     async def get_lessons(
         self: AsyncASURSO,
-        start: datetime.datetime | None = None,
-        end: datetime.datetime | None = None,
-        offset: int | None = None,
+        start: Optional[datetime.datetime] = None,
+        end: Optional[datetime.datetime] = None,
+        offset: Optional[int] = None,
     ):
         return await get_lessons_async(
             self._client, self._SID, start=start, end=end, offset=offset
@@ -162,9 +162,9 @@ class AsyncGetLessonsMethod:
 class GetLessonsMethod:
     def get_lessons(
         self: ASURSO,
-        start: datetime.datetime | None = None,
-        end: datetime.datetime | None = None,
-        offset: int | None = None,
+        start: Optional[datetime.datetime] = None,
+        end: Optional[datetime.datetime] = None,
+        offset: Optional[int] = None,
     ):
         return get_lessons_sync(
             self._client, self._SID, start=start, end=end, offset=offset

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Protocol
+from typing import Protocol, List
 import httpx
 
 
@@ -26,23 +26,23 @@ class Chat(BaseModel):
     admin_name: str = Field(..., alias="adminName")
 
 
-async def get_chats_async(client: httpx.AsyncClient) -> list[Chat]:
+async def get_chats_async(client: httpx.AsyncClient) -> List[Chat]:
     r = await client.get("/integration/chatManagement/chats/current")
     data = r.json()
     return [Chat(**i) for i in data]
 
 
-def get_chats_sync(client: httpx.Client) -> list[Chat]:
+def get_chats_sync(client: httpx.Client) -> List[Chat]:
     r = client.get("/integration/chatManagement/chats/current")
     data = r.json()
     return [Chat(**i) for i in data]
 
 
 class AsyncGetChatsMethod:
-    async def get_chats(self: AsyncASURSO) -> list[Chat]:
+    async def get_chats(self: AsyncASURSO) -> List[Chat]:
         return await get_chats_async(self._client)
 
 
 class GetChatsMethod:
-    def get_chats(self: ASURSO) -> list[Chat]:
+    def get_chats(self: ASURSO) -> List[Chat]:
         return get_chats_sync(self._client)
