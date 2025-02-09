@@ -1,0 +1,75 @@
+from typing import List, Optional, Protocol
+from pydantic import BaseModel, Field
+import httpx
+
+
+class AsyncASURSO(Protocol):
+    _SID: str
+    _login: str
+    _password: str
+    _client: httpx.AsyncClient
+
+
+class ASURSO(Protocol):
+    _SID: str
+    _login: str
+    _password: str
+    _client: httpx.Client
+
+
+class Term(BaseModel):
+    id: int
+    is_active: bool = Field(..., alias="isActive")
+    number: int
+
+
+class AcademicYear(BaseModel):
+    id: int
+    number: int
+    term_type: str = Field(..., alias="termType")
+    terms: List[Term]
+
+
+class FinalMark(BaseModel):
+    value: Optional[str] = None
+
+
+class FieldMark(BaseModel):
+    value: Optional[str] = None
+
+
+class Marks(BaseModel):
+    field: Optional[FieldMark] = Field(None, pattern=r"^\d$")
+
+
+class Subject(BaseModel):
+    final_mark: None | FinalMark = Field(default=None, alias="finalMark")
+    marks: None | Marks = None
+    name: str
+
+
+class Attestation(BaseModel):
+    academic_years: None | List[AcademicYear] = Field(None, alias="academicYears")
+    subjects: List[Subject]
+
+
+async def get_attestation_async(client: httpx.AsyncClient, SID: str) -> Attestation:
+    r = await client.get(f"services/students/{SID}/dashboard")
+    data = r.json()
+    return Attestation(**data)
+
+
+def get_attestation_sync(client: httpx.Client, SID: str) -> Attestation:
+    r = client.get(f"services/students/{SID}/dashboard")
+    data = r.json()
+    return Attestation(**data)
+
+
+class AsyncGetAttestationMethod:
+    async def get_attestation(self: AsyncASURSO) -> Attestation:
+        return await get_attestation_async(self._client, self._SID)
+
+
+class GetAttestationMethod:
+    def get_attestation(self: ASURSO) -> Attestation:
+        return get_attestation_sync(self._client, self._SID)
