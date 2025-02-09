@@ -7,8 +7,8 @@ import os
 def test_login():
     r = functions.login.login_sync(
         sync_client,
-        os.environ["ASURSO-LOGIN"],
-        os.environ["ASURSO-PASSWORD"],
+        os.environ["ASURSO_LOGIN"],
+        os.environ["ASURSO_PASSWORD"],
     )
     assert r == True
 
@@ -20,14 +20,14 @@ def test_info():
 
 def test_dashboard():
     dashboard = functions.dashboard.get_dashboard_sync(
-        sync_client, os.environ["ASURSO-SID"]
+        sync_client, os.environ["ASURSO_SID"]
     )
     print(f"{dashboard=}")
 
 
 def test_lessons():
     days = functions.lessons.get_lessons_sync(
-        sync_client, os.environ["ASURSO-SID"], offset=7
+        sync_client, os.environ["ASURSO_SID"], offset=7
     )
     # print(days[0].model_dump_json(indent=4))
 
@@ -47,7 +47,7 @@ def test_organization():
 
 def test_attestation():
     attestation = functions.attestation.get_attestation_sync(
-        sync_client, os.environ["ASURSO-SID"]
+        sync_client, os.environ["ASURSO_SID"]
     )
 
 
@@ -57,10 +57,10 @@ def test_chats():
 
 def test_reports():
     report1 = functions.reports.get_current_perfomance_sync(
-        sync_client, os.environ["ASURSO-SID"]
+        sync_client, os.environ["ASURSO_SID"]
     )
     report2 = functions.reports.get_group_attestation_sync(
-        sync_client, os.environ["ASURSO-SID"]
+        sync_client, os.environ["ASURSO_SID"]
     )
 
 

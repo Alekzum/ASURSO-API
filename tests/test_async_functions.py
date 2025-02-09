@@ -12,8 +12,8 @@ pytestmark = pytest.mark.asyncio(loop_scope="session")
 async def test_login():
     r = await functions.login.login_async(
         async_client,
-        os.environ["ASURSO-LOGIN"],
-        os.environ["ASURSO-PASSWORD"],
+        os.environ["ASURSO_LOGIN"],
+        os.environ["ASURSO_PASSWORD"],
     )
     assert r == True
 
@@ -27,7 +27,7 @@ async def test_info():
 @pytestmark
 async def test_dashboard():
     dashboard = await functions.dashboard.get_dashboard_async(
-        async_client, os.environ["ASURSO-SID"]
+        async_client, os.environ["ASURSO_SID"]
     )
     print(f"{dashboard=}")
 
@@ -35,7 +35,7 @@ async def test_dashboard():
 @pytestmark
 async def test_lessons():
     days = await functions.lessons.get_lessons_async(
-        async_client, os.environ["ASURSO-SID"], offset=7
+        async_client, os.environ["ASURSO_SID"], offset=7
     )
     # print(days[0].model_dump_json(indent=4))
 
@@ -57,7 +57,7 @@ async def test_organization():
 @pytestmark
 async def test_attestation():
     attestation = await functions.attestation.get_attestation_async(
-        async_client, os.environ["ASURSO-SID"]
+        async_client, os.environ["ASURSO_SID"]
     )
 
 
@@ -69,10 +69,10 @@ async def test_chats():
 @pytestmark
 async def test_reports():
     report1 = await functions.reports.get_current_perfomance_async(
-        async_client, os.environ["ASURSO-SID"]
+        async_client, os.environ["ASURSO_SID"]
     )
     report2 = await functions.reports.get_group_attestation_async(
-        async_client, os.environ["ASURSO-SID"]
+        async_client, os.environ["ASURSO_SID"]
     )
 
 

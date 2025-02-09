@@ -13,13 +13,13 @@ async_client = httpx.AsyncClient(base_url="https://spo.asurso.ru")
 sync_client = httpx.Client(base_url="https://spo.asurso.ru")
 
 async_asurso = AsyncASURSO(
-    login=os.environ["ASURSO-LOGIN"],
-    password=os.environ["ASURSO-PASSWORD"],
-    SID=os.environ["ASURSO-SID"],
+    login=os.environ["ASURSO_LOGIN"],
+    password=os.environ["ASURSO_PASSWORD"],
+    SID=os.environ["ASURSO_SID"],
 )
 
 sync_asurso = ASURSO(
-    login=os.environ["ASURSO-LOGIN"],
-    password=os.environ["ASURSO-PASSWORD"],
-    SID=os.environ["ASURSO-SID"],
+    login=os.environ["ASURSO_LOGIN"],
+    password=os.environ["ASURSO_PASSWORD"],
+    SID=os.environ["ASURSO_SID"],
 )
