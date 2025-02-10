@@ -6,7 +6,7 @@ import os
 
 sys.path.append(".")
 dotenv.load_dotenv(".env")
-from asurso_api import ASURSO, AsyncASURSO
+from asurso_api import ASURSO, AsyncASURSO, enums
 
 
 async_client = httpx.AsyncClient(base_url="https://spo.asurso.ru")

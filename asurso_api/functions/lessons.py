@@ -1,5 +1,6 @@
+from typing import List, Optional, Protocol, Union, Tuple
 from pydantic import BaseModel, Field
-from typing import List, Optional, Protocol
+from ..enums import LessonsPeriod
 import datetime
 import httpx
 
@@ -73,50 +74,104 @@ def format(date: datetime.date) -> str:
 
 
 def resolve_edge(
-    start: Optional[datetime.datetime] = None,
+    start: Optional[Union[datetime.datetime, LessonsPeriod]] = None,
     end: Optional[datetime.datetime] = None,
     offset: Optional[int] = None,
-):
-    if start is None:
+) -> Tuple[datetime.datetime, datetime.datetime]:
+    if isinstance(start, LessonsPeriod):
+        # days
+        if start is LessonsPeriod.PREVIOUS_DAY:
+            start_ = datetime.datetime.now() - datetime.timedelta(days=1)
+            return start_, start_
+
+        elif start is LessonsPeriod.TODAY:
+            start_ = datetime.datetime.now()
+            return start_, start_
+
+        elif start is LessonsPeriod.NEXT_DAY:
+            start_ = datetime.datetime.now() + datetime.timedelta(days=1)
+            return start_, start_
+
+        # weeks
+        elif start is LessonsPeriod.PREVIOUS_WEEK:
+            cur = datetime.datetime.now()
+            start_ = cur - datetime.timedelta(days=cur.weekday(), weeks=1)
+            end_ = cur - datetime.timedelta(days=cur.weekday() - 6, weeks=1)
+            return start_, end_
+
+        elif start is LessonsPeriod.THIS_WEEK:
+            cur = datetime.datetime.now()
+            start_ = cur - datetime.timedelta(days=cur.weekday())
+            end_ = cur - datetime.timedelta(days=cur.weekday() - 6)
+            return start_, end_
+
+        elif start is LessonsPeriod.NEXT_WEEK:
+            cur = datetime.datetime.now()
+            start_ = cur - datetime.timedelta(days=cur.weekday(), weeks=-1)
+            end_ = cur - datetime.timedelta(days=cur.weekday() - 6, weeks=-1)
+            return start_, end_
+
+        # months
+        elif start is LessonsPeriod.PREVIOUS_MONTH:
+            cur = datetime.datetime.now()
+            start_ = datetime.datetime(cur.year, cur.month - 1, 1)
+            end_ = datetime.datetime(cur.year, cur.month, 1) - datetime.timedelta(
+                days=1
+            )
+            return start_, end_
+
+        elif start is LessonsPeriod.THIS_MONTH:
+            cur = datetime.datetime.now()
+            start_ = datetime.datetime(cur.year, cur.month, 1)
+            end_ = datetime.datetime(cur.year, cur.month + 1, 1) - datetime.timedelta(
+                days=1
+            )
+            return start_, end_
+
+        elif start is LessonsPeriod.NEXT_MONTH:
+            cur = datetime.datetime.now()
+            start_ = datetime.datetime(cur.year, cur.month + 1, 1)
+            end_ = datetime.datetime(cur.year, cur.month + 2, 1) - datetime.timedelta(
+                days=1
+            )
+            return start_, end_
+        raise ValueError(f"Didn't excepted {start=}!")
+
+    elif start is None:
         if (end is None) and (offset is None):
             start_ = datetime.datetime.now()
-            end_ = start_ + datetime.timedelta(days=7)
+            return start_, start_ + datetime.timedelta(days=7)
 
         elif (end is None) and (offset is not None):
             start_ = datetime.datetime.now()
-            end_ = start_ + datetime.timedelta(days=offset)
+            return start_, start_ + datetime.timedelta(days=offset)
 
         elif (end is not None) and (offset is None):
             start_ = datetime.datetime.now()
-            end_ = end
+            return start_, end
 
         elif (end is not None) and (offset is not None):
             start_ = end - datetime.timedelta(days=offset)
-            end_ = end
+            return start_, end
+        raise ValueError(f"Didn't excepted {start=}!")
 
-    else:
-        if (offset is None) and (end is None):
-            start_ = start
-            end_ = start + datetime.timedelta(days=7)
+    if (offset is None) and (end is None):
+        return start, start + datetime.timedelta(days=7)
 
-        elif (offset is None) and (end is not None):
-            start_ = start
-            end_ = end
+    elif (offset is None) and (end is not None):
+        return start, end
 
-        elif (offset is not None) and (end is None):
-            start_ = start
-            end_ = start + datetime.timedelta(days=offset)
+    elif (offset is not None) and (end is None):
+        return start, start + datetime.timedelta(days=offset)
 
-        elif (offset is not None) and (end is not None):
-            raise ValueError("Use only (start+end, start+offset, offset+end) pair")
-
-    return start_, end_
+    # elif (offset is not None) and (end is not None):
+    raise ValueError("Use only (start+end, start+offset, offset+end) pair")
 
 
 async def get_lessons_async(
     client: httpx.AsyncClient,
     SID: str,
-    start: Optional[datetime.datetime] = None,
+    start: Optional[Union[datetime.datetime, LessonsPeriod]] = None,
     end: Optional[datetime.datetime] = None,
     offset: Optional[int] = None,
 ) -> List[Day]:
@@ -133,15 +188,13 @@ async def get_lessons_async(
 def get_lessons_sync(
     client: httpx.Client,
     SID: str,
-    start: Optional[datetime.datetime] = None,
+    start: Optional[Union[datetime.datetime, LessonsPeriod]] = None,
     end: Optional[datetime.datetime] = None,
     offset: Optional[int] = None,
 ) -> List[Day]:
     start_, end_ = resolve_edge(start, end, offset)
 
-    r = client.get(
-        f"services/students/{SID}/lessons/{format(start_)}/{format(end_)}"
-    )
+    r = client.get(f"services/students/{SID}/lessons/{format(start_)}/{format(end_)}")
     print(r, r.text)
     data = r.json()
     return [Day(**i) for i in data]
@@ -150,7 +203,7 @@ def get_lessons_sync(
 class AsyncGetLessonsMethod:
     async def get_lessons(
         self: AsyncASURSO,
-        start: Optional[datetime.datetime] = None,
+        start: Optional[Union[datetime.datetime, LessonsPeriod]] = None,
         end: Optional[datetime.datetime] = None,
         offset: Optional[int] = None,
     ):
@@ -162,7 +215,7 @@ class AsyncGetLessonsMethod:
 class GetLessonsMethod:
     def get_lessons(
         self: ASURSO,
-        start: Optional[datetime.datetime] = None,
+        start: Optional[Union[datetime.datetime, LessonsPeriod]] = None,
         end: Optional[datetime.datetime] = None,
         offset: Optional[int] = None,
     ):

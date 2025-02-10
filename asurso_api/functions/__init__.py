@@ -18,7 +18,7 @@ class AsyncMethods(
     chats.AsyncGetChatsMethod,
     organization.AsyncGetOrganizationMethod,
     reports.AsyncGetReportMethods,
-    logout.AsyncLogoutMethod
+    logout.AsyncLogoutMethod,
 ):
     pass
 
@@ -32,6 +32,6 @@ class Methods(
     chats.GetChatsMethod,
     organization.GetOrganizationMethod,
     reports.GetReportMethods,
-    logout.LogoutMethod
+    logout.LogoutMethod,
 ):
     pass

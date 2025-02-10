@@ -22,10 +22,9 @@ class AsyncASURSO(AsyncMethods):
         """
         self._login = login
         self._password = hash_password(password)
-        
+
         self._SID = SID
         self._client = httpx.AsyncClient(base_url="https://spo.asurso.ru")
-    
 
     async def __aenter__(self):
         await self.login()
@@ -35,7 +34,6 @@ class AsyncASURSO(AsyncMethods):
         await self.logout()
         if exc and any(exc):
             raise Exception(*exc)
-            
 
 
 @dataclass
@@ -55,10 +53,10 @@ class ASURSO(Methods):
         """
         self._login = login
         self._password = hash_password(password)
-        
+
         self._SID = SID
         self._client = httpx.Client(base_url="https://spo.asurso.ru")
-    
+
     def __enter__(self):
         self.login()
         return self
