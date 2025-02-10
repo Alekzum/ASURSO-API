@@ -1,7 +1,14 @@
+from ..functions.attestation import Attestation
+from ..functions.chats import Chat
+from ..functions.dashboard import Dashboard
+from ..functions.info import Info
+from ..functions.lessons import LessonsDay, Lesson
+from ..functions.organization import Organization
+from ..functions.reports import GroupAttestation, CurrentPerfomance
+
 from dataclasses import dataclass
 from ..functions import AsyncMethods, Methods
 from ..utils import hash_password
-import contextlib
 import httpx
 
 
@@ -58,10 +65,12 @@ class ASURSO(Methods):
         self._client = httpx.Client(base_url="https://spo.asurso.ru")
 
     def __enter__(self):
-        self.login()
+        self.login(True)
         return self
 
     def __exit__(self, *exc):
         self.logout()
         if exc and any(exc):
-            raise Exception(*exc)
+            builded_exc = exc[1]
+            builded_exc.with_traceback(exc[2])
+            raise builded_exc

@@ -23,29 +23,29 @@ class Subject(BaseModel):
     id: int
 
 
-class Subjects(BaseModel):
+class Dashboard(BaseModel):
     subjects: List[Subject]
 
 
-async def get_dashboard_async(client: httpx.AsyncClient, SID: str) -> Subjects:
+async def get_dashboard_async(client: httpx.AsyncClient, SID: str) -> Dashboard:
     r = await client.get(f"services/students/{SID}/dashboard")
-    print(r, r.text)
+    # print(r, r.text)
     data = r.json()
-    return Subjects(**data)
+    return Dashboard(**data)
 
 
-def get_dashboard_sync(client: httpx.Client, SID: str) -> Subjects:
+def get_dashboard_sync(client: httpx.Client, SID: str) -> Dashboard:
     r = client.get(f"services/students/{SID}/dashboard")
-    print(r, r.text)
+    # print(r, r.text)
     data = r.json()
-    return Subjects(**data)
+    return Dashboard(**data)
 
 
 class AsyncGetDashboardMethod:
-    async def get_dashboard(self: AsyncASURSO) -> Subjects:
+    async def get_dashboard(self: AsyncASURSO) -> Dashboard:
         return await get_dashboard_async(self._client, self._SID)
 
 
 class GetDashboardMethod:
-    def get_dashboard(self: ASURSO) -> Subjects:
+    def get_dashboard(self: ASURSO) -> Dashboard:
         return get_dashboard_sync(self._client, self._SID)
