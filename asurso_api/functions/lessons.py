@@ -145,19 +145,25 @@ class LessonsDay(BaseModel):
         return f"<Занятия на {self.date:%d.%m.%y}: {', '.join([lesson.humanize() for lesson in self.lessons])}>"
 
 
-def format(date: datetime.date, rus=False) -> str:
+def format(date: Union[datetime.date, datetime.datetime], rus=False) -> str:
     if rus:
         return date.strftime("%d.%m.%Y")
     return date.strftime("%Y-%m-%d")
 
 
 def resolve_edge(
-    start: Optional[Union[datetime.datetime, LessonsPeriod]] = None,
-    end: Optional[datetime.datetime] = None,
+    start: Optional[Union[datetime.date, datetime.datetime, LessonsPeriod]] = None,
+    end: Optional[Union[datetime.date, datetime.datetime]] = None,
     offset: Optional[int] = None,
-) -> Tuple[datetime.datetime, datetime.datetime]:
+) -> Tuple[datetime.date, datetime.date]:
     cur = datetime.datetime.now()
-    for_enum = {
+    if isinstance(start, datetime.date):
+        start = datetime.datetime.combine(start, cur.time())
+
+    if isinstance(end, datetime.date):
+        end = datetime.datetime.combine(end, cur.time())
+
+    for_enum: dict[LessonsPeriod, tuple[datetime.datetime, datetime.datetime]] = {
         # days
         LessonsPeriod.PREVIOUS_DAY: (
             cur - datetime.timedelta(days=1),
@@ -197,26 +203,26 @@ def resolve_edge(
     }
 
     if isinstance(start, LessonsPeriod):
-        return for_enum[start]
+        return for_enum[start][0].date(), for_enum[start][1].date()
 
     if start is None:
         if offset is None and end is None:
-            return (cur, cur + datetime.timedelta(days=7))
+            return (cur.date(), (cur + datetime.timedelta(days=7)).date())
         elif offset is None and end is not None:
-            return (cur, end)
+            return (cur.date(), end.date())
         elif offset is not None and end is None:
-            return (cur, cur + datetime.timedelta(days=offset))
+            return (cur.date(), (cur + datetime.timedelta(days=offset)).date())
 
         assert offset is not None and end is not None
-        return (end - datetime.timedelta(days=offset), end)
+        return ((end - datetime.timedelta(days=offset)).date(), end.date())
 
     assert start is not None
     if offset is None and end is None:
-        return (start, start + datetime.timedelta(days=7))
+        return (start.date(), (start + datetime.timedelta(days=7)).date())
     elif offset is None and end is not None:
-        return (start, end)
+        return (start.date(), end.date())
     elif offset is not None and end is None:
-        return (start, start + datetime.timedelta(days=offset))
+        return (start.date(), (start + datetime.timedelta(days=offset)))
 
     assert end is not None and offset is not None
     raise ValueError("Use only (start+end, start+offset, offset+end) pair")
@@ -241,14 +247,14 @@ def resolve_edge(
 async def get_lessons_async(
     client: httpx.AsyncClient,
     SID: str,
-    start: Optional[Union[datetime.datetime, LessonsPeriod]] = None,
-    end: Optional[datetime.datetime] = None,
+    start: Union[datetime.date, datetime.datetime, LessonsPeriod] = LessonsPeriod.THIS_WEEK,
+    end: Optional[Union[datetime.date, datetime.datetime]] = None,
     offset: Optional[int] = None,
 ) -> List[LessonsDay]:
     start_, end_ = resolve_edge(start, end, offset)
 
     r = await client.get(
-        f"services/students/{SID}/lessons/{format(start_)}/{format(end_)}"
+        f"services/students/{SID}/lessons/{format(start_, rus=False)}/{format(end_, rus=False)}"
     )
     print(r, r.text)
     data = r.json()
@@ -258,13 +264,15 @@ async def get_lessons_async(
 def get_lessons_sync(
     client: httpx.Client,
     SID: str,
-    start: Optional[Union[datetime.datetime, LessonsPeriod]] = None,
-    end: Optional[datetime.datetime] = None,
+    start: Union[datetime.date, datetime.datetime, LessonsPeriod] = LessonsPeriod.THIS_WEEK,
+    end: Optional[Union[datetime.date, datetime.datetime]] = None,
     offset: Optional[int] = None,
 ) -> List[LessonsDay]:
     start_, end_ = resolve_edge(start, end, offset)
 
-    r = client.get(f"services/students/{SID}/lessons/{format(start_)}/{format(end_)}")
+    r = client.get(
+        f"services/students/{SID}/lessons/{format(start_, rus=False)}/{format(end_, rus=False)}"
+    )
     data = r.json()
     return [LessonsDay(**i) for i in data]
 
@@ -272,8 +280,8 @@ def get_lessons_sync(
 class AsyncGetLessonsMethod:
     async def get_lessons(
         self: AsyncASURSO,
-        start: Optional[Union[datetime.datetime, LessonsPeriod]] = None,
-        end: Optional[datetime.datetime] = None,
+        start: Union[datetime.date, datetime.datetime, LessonsPeriod] = LessonsPeriod.THIS_WEEK,
+        end: Optional[Union[datetime.date, datetime.datetime]] = None,
         offset: Optional[int] = None,
     ):
         return await get_lessons_async(
@@ -284,8 +292,8 @@ class AsyncGetLessonsMethod:
 class GetLessonsMethod:
     def get_lessons(
         self: ASURSO,
-        start: Optional[Union[datetime.datetime, LessonsPeriod]] = None,
-        end: Optional[datetime.datetime] = None,
+        start: Union[datetime.date, datetime.datetime, LessonsPeriod] = LessonsPeriod.THIS_WEEK,
+        end: Optional[Union[datetime.date, datetime.datetime]] = None,
         offset: Optional[int] = None,
     ):
         return get_lessons_sync(
