@@ -130,19 +130,20 @@ class LessonsDay(BaseModel):
     is_short: bool = Field(..., alias="isShort")
 
     @property
-    def date(self):
+    def date(self) -> datetime.date:
         if hasattr(self, "_d"):
             return getattr(self, "_d")
-        _d = datetime.datetime.strptime(self.date_raw.split("T")[0], "%Y-%m-%d")
+        _d = datetime.datetime.strptime(self.date_raw.split("T")[0], "%Y-%m-%d").date()
         setattr(self, "_d", _d)
         return _d
 
     @property
-    def ru_date(self):
+    def ru_date(self) -> str:
+        """something like "01.01.2021" """
         return format(self.date, rus=True)
 
     def humanize(self):
-        return f"<Занятия на {self.date:%d.%m.%y}: {', '.join([lesson.humanize() for lesson in self.lessons])}>"
+        return f"<Занятия на {self.ru_date}: {', '.join([lesson.humanize() for lesson in self.lessons])}>"
 
 
 def format(date: Union[datetime.date, datetime.datetime], rus=False) -> str:
