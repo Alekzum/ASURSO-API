@@ -157,6 +157,7 @@ def resolve_edge(
     end: Optional[Union[datetime.date, datetime.datetime]] = None,
     offset: Optional[int] = None,
 ) -> Tuple[datetime.date, datetime.date]:
+    """Get two datetime.date from some range"""
     cur = datetime.datetime.now()
     if isinstance(start, datetime.date):
         start = datetime.datetime.combine(start, cur.time())
