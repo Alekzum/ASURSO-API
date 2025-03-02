@@ -18,7 +18,7 @@ class ASURSO(Protocol):
     _client: httpx.Client
 
 
-# Current perfomance
+# Current performance
 class Month(BaseModel):
     num: int
     name: str
@@ -41,7 +41,7 @@ class DaysWithMarksForSubjectItem(BaseModel):
     average_mark: Optional[float] = Field(None, alias="averageMark")
 
 
-class CurrentPerfomance(BaseModel):
+class CurrentPerformance(BaseModel):
     months_with_days: List[MonthsWithDay] = Field(..., alias="monthsWithDays")
     days_with_marks_for_subject: List[DaysWithMarksForSubjectItem] = Field(
         ..., alias="daysWithMarksForSubject"
@@ -102,13 +102,13 @@ class GroupAttestation(BaseModel):
     department_name: str = Field(..., alias="departmentName")
 
 
-async def get_current_perfomance_async(
+async def get_current_performance_async(
     client: httpx.AsyncClient, SID: str
-) -> CurrentPerfomance:
+) -> CurrentPerformance:
     r = await client.get(f"/services/reports/current/performance/{SID}")
-    return parse_response(r, CurrentPerfomance)
+    return parse_response(r, CurrentPerformance)
     data = r.json()
-    return CurrentPerfomance(**data)
+    return CurrentPerformance(**data)
 
 
 async def get_group_attestation_async(
@@ -121,10 +121,10 @@ async def get_group_attestation_async(
     return GroupAttestation(**data)
 
 
-def get_current_perfomance_sync(client: httpx.Client, SID: str) -> CurrentPerfomance:
+def get_current_performance_sync(client: httpx.Client, SID: str) -> CurrentPerformance:
     r = client.get(f"/services/reports/current/performance/{SID}")
     data = r.json()
-    return CurrentPerfomance(**data)
+    return CurrentPerformance(**data)
 
 
 def get_group_attestation_sync(client: httpx.Client, SID: str) -> GroupAttestation:
@@ -134,16 +134,16 @@ def get_group_attestation_sync(client: httpx.Client, SID: str) -> GroupAttestati
 
 
 class AsyncGetReportMethods:
-    async def get_current_perfomance(self: AsyncASURSO):
-        return await get_current_perfomance_async(self._client, self._SID)
+    async def get_current_performance(self: AsyncASURSO):
+        return await get_current_performance_async(self._client, self._SID)
 
     async def get_group_attestation(self: AsyncASURSO):
         return await get_group_attestation_async(self._client, self._SID)
 
 
 class GetReportMethods:
-    def get_current_perfomance(self: ASURSO):
-        return get_current_perfomance_sync(self._client, self._SID)
+    def get_current_performance(self: ASURSO):
+        return get_current_performance_sync(self._client, self._SID)
 
     def get_group_attestation(self: ASURSO):
         return get_group_attestation_sync(self._client, self._SID)

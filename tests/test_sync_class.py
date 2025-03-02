@@ -5,7 +5,7 @@ from . import sync_asurso
 def test_login():
     login_success = sync_asurso.login()
     print(login_success)
-    assert isinstance(login_success, bool)
+    assert isinstance(login_success, classes.LoginInfo)
 
 
 def test_attestation():
@@ -22,10 +22,10 @@ def test_chats():
     )
 
 
-def test_current_perfomance():
-    current_perfomance = sync_asurso.get_current_perfomance()
-    print(current_perfomance)
-    assert isinstance(current_perfomance, classes.CurrentPerfomance)
+def test_current_performance():
+    current_performance = sync_asurso.get_current_performance()
+    print(current_performance)
+    assert isinstance(current_performance, classes.CurrentPerformance)
 
 
 def test_dashboard():

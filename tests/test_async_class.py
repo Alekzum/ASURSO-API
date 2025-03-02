@@ -10,7 +10,7 @@ pytestmark = pytest.mark.asyncio(loop_scope="module")
 async def test_login():
     login_success = await async_asurso.login()
     print(login_success)
-    assert isinstance(login_success, bool)
+    assert isinstance(login_success, classes.LoginInfo)
 
 
 @pytestmark
@@ -30,10 +30,10 @@ async def test_chats():
 
 
 @pytestmark
-async def test_current_perfomance():
-    current_perfomance = await async_asurso.get_current_perfomance()
-    print(current_perfomance)
-    assert isinstance(current_perfomance, classes.CurrentPerfomance)
+async def test_current_performance():
+    current_performance = await async_asurso.get_current_performance()
+    print(current_performance)
+    assert isinstance(current_performance, classes.CurrentPerformance)
 
 
 @pytestmark

@@ -5,7 +5,7 @@ from ..functions.login import LoginInfo
 from ..functions.info import Info
 from ..functions.lessons import LessonsDay, Lesson
 from ..functions.organization import Organization
-from ..functions.reports import GroupAttestation, CurrentPerfomance
+from ..functions.reports import GroupAttestation, CurrentPerformance
 
 from dataclasses import dataclass
 from ..functions import AsyncMethods, Methods

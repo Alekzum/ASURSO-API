@@ -14,7 +14,7 @@ def test_login():
         os.environ["ASURSO_LOGIN"],
         os.environ["ASURSO_PASSWORD"],
     )
-    assert isinstance(login_success, bool)
+    assert isinstance(login_success, classes.LoginInfo)
 
 
 def test_attestation():
@@ -31,11 +31,11 @@ def test_chats():
     )
 
 
-def test_current_perfomance():
-    current_perfomance = functions.reports.get_current_perfomance_sync(
+def test_current_performance():
+    current_performance = functions.reports.get_current_performance_sync(
         client=sync_client, SID=SID
     )
-    assert isinstance(current_perfomance, classes.CurrentPerfomance)
+    assert isinstance(current_performance, classes.CurrentPerformance)
 
 
 def test_dashboard():
