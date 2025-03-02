@@ -1,3 +1,4 @@
+from asurso_api.functions.utils import parse_response
 from typing import Any, Dict, List, Optional, Protocol
 from pydantic import BaseModel, Field
 import httpx
@@ -105,6 +106,7 @@ async def get_current_perfomance_async(
     client: httpx.AsyncClient, SID: str
 ) -> CurrentPerfomance:
     r = await client.get(f"/services/reports/current/performance/{SID}")
+    return parse_response(r, CurrentPerfomance)
     data = r.json()
     return CurrentPerfomance(**data)
 

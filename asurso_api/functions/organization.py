@@ -1,6 +1,11 @@
+from asurso_api.functions.utils import parse_response
 from pydantic import BaseModel, Field
 from typing import Protocol
+import logging
 import httpx
+
+
+logger = logging.getLogger(__name__)
 
 
 class AsyncASURSO(Protocol):
@@ -104,14 +109,12 @@ class Organization(BaseModel):
 
 async def get_organization_async(client: httpx.AsyncClient) -> Organization:
     r = await client.get("/services/people/organization")
-    data = r.json()
-    return Organization(**data)
+    return parse_response(r, Organization)
 
 
 def get_organization_sync(client: httpx.Client) -> Organization:
     r = client.get("/services/people/organization")
-    data = r.json()
-    return Organization(**data)
+    return parse_response(r, Organization)
 
 
 class AsyncGetOrganizationMethod:

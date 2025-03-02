@@ -1,6 +1,11 @@
+from asurso_api.functions.utils import parse_response
 from typing import List, Optional, Protocol
 from pydantic import BaseModel, Field
+import logging
 import httpx
+
+
+logger = logging.getLogger(__name__)
 
 
 class AsyncASURSO(Protocol):
@@ -55,14 +60,12 @@ class Attestation(BaseModel):
 
 async def get_attestation_async(client: httpx.AsyncClient, SID: str) -> Attestation:
     r = await client.get(f"services/students/{SID}/dashboard")
-    data = r.json()
-    return Attestation(**data)
+    return parse_response(r, Attestation)
 
 
 def get_attestation_sync(client: httpx.Client, SID: str) -> Attestation:
     r = client.get(f"services/students/{SID}/dashboard")
-    data = r.json()
-    return Attestation(**data)
+    return parse_response(r, Attestation)
 
 
 class AsyncGetAttestationMethod:

@@ -1,6 +1,7 @@
 from ..functions.attestation import Attestation
 from ..functions.chats import Chat
 from ..functions.dashboard import Dashboard
+from ..functions.login import LoginInfo
 from ..functions.info import Info
 from ..functions.lessons import LessonsDay, Lesson
 from ..functions.organization import Organization

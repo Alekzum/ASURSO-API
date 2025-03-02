@@ -1,6 +1,11 @@
-from pydantic import BaseModel
+from asurso_api.functions.utils import parse_response
 from typing import List, Protocol
+from pydantic import BaseModel
+import logging
 import httpx
+
+
+logger = logging.getLogger(__name__)
 
 
 class AsyncASURSO(Protocol):
@@ -29,16 +34,12 @@ class Dashboard(BaseModel):
 
 async def get_dashboard_async(client: httpx.AsyncClient, SID: str) -> Dashboard:
     r = await client.get(f"services/students/{SID}/dashboard")
-    # print(r, r.text)
-    data = r.json()
-    return Dashboard(**data)
+    return parse_response(r, Dashboard)
 
 
 def get_dashboard_sync(client: httpx.Client, SID: str) -> Dashboard:
     r = client.get(f"services/students/{SID}/dashboard")
-    # print(r, r.text)
-    data = r.json()
-    return Dashboard(**data)
+    return parse_response(r, Dashboard)
 
 
 class AsyncGetDashboardMethod:

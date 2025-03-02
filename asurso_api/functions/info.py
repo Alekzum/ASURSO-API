@@ -1,6 +1,11 @@
+from asurso_api.functions.utils import parse_response
 from typing import Protocol, List
 from pydantic import BaseModel
+import logging
 import httpx
+
+
+logger = logging.getLogger(__name__)
 
 
 class TitleItem(BaseModel):
@@ -75,23 +80,21 @@ class ASURSO(Protocol):
     _client: httpx.Client
 
 
-async def get_info_async(client: httpx.AsyncClient):
+async def get_info_async(client: httpx.AsyncClient) -> Info:
     r = await client.get("/services/people/system/info")
-    data = r.json()
-    return Info(**data)
+    return parse_response(r, Info)
 
 
-def get_info_sync(client: httpx.Client):
+def get_info_sync(client: httpx.Client) -> Info:
     r = client.get("/services/people/system/info")
-    data = r.json()
-    return Info(**data)
+    return parse_response(r, Info)
 
 
 class AsyncGetInfoMethod:
-    async def get_info(self: AsyncASURSO):
+    async def get_info(self: AsyncASURSO) -> Info:
         return await get_info_async(self._client)
 
 
 class GetInfoMethod:
-    def get_info(self: ASURSO):
+    def get_info(self: ASURSO) -> Info:
         return get_info_sync(self._client)

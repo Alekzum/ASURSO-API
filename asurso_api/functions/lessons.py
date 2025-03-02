@@ -1,8 +1,14 @@
-from typing import List, Optional, Protocol, Union, Tuple
+from asurso_api.functions.utils import parse_response
+from typing import List, Optional, Protocol, Union, Tuple, TypeVar
 from pydantic import BaseModel, Field
 from ..enums import LessonsPeriod
 import datetime
+import logging
 import httpx
+
+
+logger = logging.getLogger(__name__)
+T = TypeVar("T", datetime.datetime, None)
 
 
 class AsyncASURSO(Protocol):
@@ -228,28 +234,14 @@ def resolve_edge(
 
     assert end is not None and offset is not None
     raise ValueError("Use only (start+end, start+offset, offset+end) pair")
-    # temp_result = pairs[start is None][(end is None and offset is None)]
-    # if isinstance(temp_result, Exception):
-    #     raise temp_result
-    # return
-
-    # if (offset is None) and (end is None):
-    #     return
-
-    # elif (offset is None) and (end is not None):
-    #     return
-
-    # elif (offset is not None) and (end is None):
-    #     return
-
-    # elif (offset is not None) and (end is not None):
-    raise ValueError("Use only (start+end, start+offset, offset+end) pair")
 
 
 async def get_lessons_async(
     client: httpx.AsyncClient,
     SID: str,
-    start: Union[datetime.date, datetime.datetime, LessonsPeriod] = LessonsPeriod.THIS_WEEK,
+    start: Union[
+        datetime.date, datetime.datetime, LessonsPeriod
+    ] = LessonsPeriod.THIS_WEEK,
     end: Optional[Union[datetime.date, datetime.datetime]] = None,
     offset: Optional[int] = None,
 ) -> List[LessonsDay]:
@@ -258,15 +250,15 @@ async def get_lessons_async(
     r = await client.get(
         f"services/students/{SID}/lessons/{format(start_, rus=False)}/{format(end_, rus=False)}"
     )
-    print(r, r.text)
-    data = r.json()
-    return [LessonsDay(**i) for i in data]
+    return parse_response(r, [LessonsDay])
 
 
 def get_lessons_sync(
     client: httpx.Client,
     SID: str,
-    start: Union[datetime.date, datetime.datetime, LessonsPeriod] = LessonsPeriod.THIS_WEEK,
+    start: Union[
+        datetime.date, datetime.datetime, LessonsPeriod
+    ] = LessonsPeriod.THIS_WEEK,
     end: Optional[Union[datetime.date, datetime.datetime]] = None,
     offset: Optional[int] = None,
 ) -> List[LessonsDay]:
@@ -275,14 +267,15 @@ def get_lessons_sync(
     r = client.get(
         f"services/students/{SID}/lessons/{format(start_, rus=False)}/{format(end_, rus=False)}"
     )
-    data = r.json()
-    return [LessonsDay(**i) for i in data]
+    return parse_response(r, [LessonsDay])
 
 
 class AsyncGetLessonsMethod:
     async def get_lessons(
         self: AsyncASURSO,
-        start: Union[datetime.date, datetime.datetime, LessonsPeriod] = LessonsPeriod.THIS_WEEK,
+        start: Union[
+            datetime.date, datetime.datetime, LessonsPeriod
+        ] = LessonsPeriod.THIS_WEEK,
         end: Optional[Union[datetime.date, datetime.datetime]] = None,
         offset: Optional[int] = None,
     ):
@@ -294,7 +287,9 @@ class AsyncGetLessonsMethod:
 class GetLessonsMethod:
     def get_lessons(
         self: ASURSO,
-        start: Union[datetime.date, datetime.datetime, LessonsPeriod] = LessonsPeriod.THIS_WEEK,
+        start: Union[
+            datetime.date, datetime.datetime, LessonsPeriod
+        ] = LessonsPeriod.THIS_WEEK,
         end: Optional[Union[datetime.date, datetime.datetime]] = None,
         offset: Optional[int] = None,
     ):

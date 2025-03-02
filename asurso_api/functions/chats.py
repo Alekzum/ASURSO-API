@@ -1,6 +1,11 @@
+from asurso_api.functions.utils import parse_response
 from pydantic import BaseModel, Field
 from typing import Protocol, List
+import logging
 import httpx
+
+
+logger = logging.getLogger(__name__)
 
 
 class AsyncASURSO(Protocol):
@@ -28,14 +33,12 @@ class Chat(BaseModel):
 
 async def get_chats_async(client: httpx.AsyncClient) -> List[Chat]:
     r = await client.get("/integration/chatManagement/chats/current")
-    data = r.json()
-    return [Chat(**i) for i in data]
+    return parse_response(r, [Chat])
 
 
 def get_chats_sync(client: httpx.Client) -> List[Chat]:
     r = client.get("/integration/chatManagement/chats/current")
-    data = r.json()
-    return [Chat(**i) for i in data]
+    return parse_response(r, [Chat])
 
 
 class AsyncGetChatsMethod:
