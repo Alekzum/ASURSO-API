@@ -8,7 +8,7 @@ from ..functions.reports import GroupAttestation, CurrentPerfomance
 
 from dataclasses import dataclass
 from ..functions import AsyncMethods, Methods
-from ..utils import hash_password
+from ..functions.utils import hash_password
 import httpx
 
 

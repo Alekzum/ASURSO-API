@@ -7,6 +7,7 @@ from . import chats
 from . import organization
 from . import reports
 from . import logout
+from . import utils
 
 
 class AsyncMethods(
