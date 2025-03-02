@@ -1,5 +1,16 @@
 from asurso_api.functions.utils import parse_response
-from typing import List, Optional, Protocol, Union, Tuple, TypeVar
+from typing import (
+    List,
+    Optional,
+    Protocol,
+    Union,
+    Tuple,
+    Dict,
+    Callable,
+    TypeVar,
+    Type,
+    cast,
+)
 from pydantic import BaseModel, Field
 from ..enums import LessonsPeriod
 import datetime
@@ -171,7 +182,7 @@ def resolve_edge(
     if isinstance(end, datetime.date):
         end = datetime.datetime.combine(end, cur.time())
 
-    for_enum: dict[LessonsPeriod, tuple[datetime.datetime, datetime.datetime]] = {
+    for_enum: Dict[LessonsPeriod, Tuple[datetime.datetime, datetime.datetime]] = {
         # days
         LessonsPeriod.PREVIOUS_DAY: (
             cur - datetime.timedelta(days=1),
@@ -213,27 +224,43 @@ def resolve_edge(
     if isinstance(start, LessonsPeriod):
         return for_enum[start][0].date(), for_enum[start][1].date()
 
-    if start is None:
-        if offset is None and end is None:
-            return (cur.date(), (cur + datetime.timedelta(days=7)).date())
-        elif offset is None and end is not None:
-            return (cur.date(), end.date())
-        elif offset is not None and end is None:
-            return (cur.date(), (cur + datetime.timedelta(days=offset)).date())
+    N = None
+    D = datetime.datetime
 
-        assert offset is not None and end is not None
-        return ((end - datetime.timedelta(days=offset)).date(), end.date())
+    start = cast(datetime.datetime, start)
+    offset = cast(int, offset)
+    end = cast(datetime.datetime, end)
 
-    assert start is not None
-    if offset is None and end is None:
-        return (start.date(), (start + datetime.timedelta(days=7)).date())
-    elif offset is None and end is not None:
-        return (start.date(), end.date())
-    elif offset is not None and end is None:
-        return (start.date(), (start + datetime.timedelta(days=offset)))
+    for_dates: Dict[
+        Tuple[
+            Union[None, Type[datetime.datetime]],
+            Union[None, Type[int]],
+            Union[None, Type[datetime.datetime]],
+        ],
+        Callable[[], Union[Tuple[datetime.date, datetime.date], Exception]],
+    ] = {
+        (N, N, N): lambda: (cur.date(), (cur + datetime.timedelta(days=7)).date()),
+        (N, N, D): lambda: (cur.date(), end.date()),
+        (N, int, N): lambda: (
+            cur.date(),
+            (cur + datetime.timedelta(days=offset)).date(),
+        ),
+        (N, int, D): lambda: (
+            (end - datetime.timedelta(days=offset)).date(),
+            end.date(),
+        ),
+        (D, N, N): lambda: (start.date(), (start + datetime.timedelta(days=7)).date()),
+        (D, N, D): lambda: (start.date(), end.date()),
+        (D, int, N): lambda: (start.date(), (start + datetime.timedelta(days=offset))),
+        (D, int, D): lambda: ValueError(
+            "Use only (start+end, start+offset, offset+end) pair"
+        ),
+    }
 
-    assert end is not None and offset is not None
-    raise ValueError("Use only (start+end, start+offset, offset+end) pair")
+    result = for_dates[type(start), type(offset), type(end)]()
+    if isinstance(result, Exception):
+        raise result
+    return result
 
 
 async def get_lessons_async(
