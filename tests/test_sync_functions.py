@@ -1,6 +1,5 @@
-from asurso_api import functions, enums, classes
 from . import sync_client
-
+from asurso_api import functions, enums, classes
 import os
 
 

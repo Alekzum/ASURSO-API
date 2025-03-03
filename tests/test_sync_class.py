@@ -1,5 +1,5 @@
-from asurso_api import enums, classes
 from . import sync_asurso
+from asurso_api import enums, classes
 
 
 def test_login():
