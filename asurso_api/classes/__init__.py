@@ -27,7 +27,7 @@ class AsyncASURSO(AsyncMethods):
         password: str,
         SID: str,
         timeout: int = 60,
-        proxy: Union[httpx.Proxy, None] = None,
+        proxy: Union[httpx.URL, str, httpx.Proxy, None] = None,
     ):
         """
         Args:
@@ -70,7 +70,7 @@ class ASURSO(Methods):
         password: str,
         SID: str,
         timeout: int = 60,
-        proxy: Union[httpx.Proxy, None] = None,
+        proxy: Union[httpx.URL, str, httpx.Proxy, None] = None,
     ):
         """Just create ASURSO object to use this API
 
