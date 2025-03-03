@@ -5,6 +5,12 @@ import base64
 import httpx
 
 
+class UnauthorizedError(ValueError):
+    msg: str
+    def __init__(self, msg: str):
+        self.msg = msg
+
+
 logger = logging.getLogger(__name__)
 T = TypeVar("T")
 
@@ -25,6 +31,7 @@ def parse_response(
     r: httpx.Response,
     my_type: Union[Type[T], List[Type[T]]],
 ) -> Union[T, List[T]]:
+    check_for_errors(r)
     data = r.json()
     logger.debug(f"{r.url=}, {data=}")
 
@@ -42,3 +49,13 @@ def parse_response(
     else:
         result = my_type(**data)
     return result
+
+
+def check_for_errors(r: httpx.Response):
+    if r.status_code == 401:
+        d = r.json()
+        if "responseStatus" not in d or "message" not in d["responseStatus"]:
+            return
+        raise UnauthorizedError(d["responseStatus"]["message"])
+    return
+    ...
