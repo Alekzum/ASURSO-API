@@ -1,9 +1,5 @@
+from . import async_asurso, pytestmark
 from asurso_api import enums, classes
-from . import async_asurso
-import pytest
-
-
-pytestmark = pytest.mark.asyncio(loop_scope="module")
 
 
 @pytestmark

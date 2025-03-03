@@ -1,13 +1,10 @@
+from . import async_client, pytestmark
 from asurso_api import functions, enums, classes
-from . import async_client
-
-import pytest
 import os
 
 
 LOGIN = os.environ["ASURSO_LOGIN"]
 SID = os.environ["ASURSO_SID"]
-pytestmark = pytest.mark.asyncio(loop_scope="session")
 
 
 @pytestmark
