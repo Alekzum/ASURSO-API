@@ -9,7 +9,8 @@ from ..functions.reports import GroupAttestation, CurrentPerformance
 
 from dataclasses import dataclass
 from ..functions import AsyncMethods, Methods
-from ..functions.utils import hash_password
+from ..utils import hash_password
+from typing import Union
 import httpx
 
 
@@ -20,28 +21,40 @@ class AsyncASURSO(AsyncMethods):
     _SID: str
     _client: httpx.AsyncClient
 
-    def __init__(self, login: str, password: str, SID: str):
-        """Just create ASURSO object to use this API
-
+    def __init__(
+        self,
+        login: str,
+        password: str,
+        SID: str,
+        timeout: int = 60,
+        proxy: Union[httpx.Proxy, None] = None,
+    ):
+        """
         Args:
-            login (str): your login
-            password (str): your password
-            SID (str): get via DevTools please
+            login (str): your ASURSO account's login.
+            password (str): your ASURSO account's password.
+            SID (str): get via DevTools please.
+            timeout (int): httpx.AsyncClient's timeout in seconds. Defaults to 60.
+            proxy (Union[httpx.Proxy, None], optional): proxy for httpx.AsyncClient. Defaults to None.
         """
         self._login = login
         self._password = hash_password(password)
 
         self._SID = SID
-        self._client = httpx.AsyncClient(base_url="https://spo.asurso.ru")
+        self._client = httpx.AsyncClient(
+            base_url="https://spo.asurso.ru", timeout=timeout, proxy=proxy
+        )
 
     async def __aenter__(self):
-        await self.login()
+        await self.login(True)
         return self
 
     async def __aexit__(self, *exc):
         await self.logout()
         if exc and any(exc):
-            raise Exception(*exc)
+            builded_exc = exc[1]
+            builded_exc.with_traceback(exc[2])
+            raise builded_exc
 
 
 @dataclass
@@ -51,19 +64,30 @@ class ASURSO(Methods):
     _SID: str
     _client: httpx.Client
 
-    def __init__(self, login: str, password: str, SID: str):
+    def __init__(
+        self,
+        login: str,
+        password: str,
+        SID: str,
+        timeout: int = 60,
+        proxy: Union[httpx.Proxy, None] = None,
+    ):
         """Just create ASURSO object to use this API
 
         Args:
-            login (str): your login
-            password (str): your password
-            SID (str): get via DevTools please
+            login (str): your ASURSO account's login.
+            password (str): your ASURSO account's password.
+            SID (str): get via DevTools please.
+            timeout (int): httpx.AsyncClient's timeout in seconds. Defaults to 60.
+            proxy (Union[httpx.Proxy, None], optional): proxy for httpx.AsyncClient. Defaults to None.
         """
         self._login = login
         self._password = hash_password(password)
 
         self._SID = SID
-        self._client = httpx.Client(base_url="https://spo.asurso.ru")
+        self._client = httpx.Client(
+            base_url="https://spo.asurso.ru", timeout=timeout, proxy=proxy
+        )
 
     def __enter__(self):
         self.login(True)
