@@ -1,4 +1,4 @@
-from asurso_api.functions.utils import parse_response
+from ..utils import parse_response
 from typing import Any, Dict, List, Optional, Protocol
 from pydantic import BaseModel, Field
 import httpx

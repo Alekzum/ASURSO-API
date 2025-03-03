@@ -1,4 +1,4 @@
-from .utils import hash_password, parse_response
+from ..utils import hash_password, parse_response
 from pydantic import BaseModel, Field
 from typing import Protocol, List
 import logging
