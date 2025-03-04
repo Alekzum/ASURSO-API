@@ -1,6 +1,6 @@
 from ..utils import hash_password, parse_response
 from pydantic import BaseModel, Field
-from typing import Protocol, List
+from typing import Protocol, List, Union
 import logging
 import httpx
 
@@ -186,21 +186,24 @@ def login_sync(
     return parse_response(r, LoginInfo)
 
 
+def format_output(client: Union[AsyncASURSO, ASURSO], r: LoginInfo) -> None:
+    SID = r.model_dump()["tenants"][r.tenant_name]["studentRole"]["id"]
+    client._SID = SID
+
+
 class AsyncLoginMethod:
     async def login(self: AsyncASURSO, isRemember=False):
-        results = await login_async(
+        result = await login_async(
             self._client, self._login, self._password, isRemember, need_to_hash=False
         )
-        SID = results.model_dump()["tenats"][results.tenant_name]["studentRole"]["id"]
-        self._SID = SID
-        return results
+        format_output(self, result)
+        return result
 
 
 class LoginMethod:
     def login(self: ASURSO, isRemember=False):
-        results = login_sync(
+        result = login_sync(
             self._client, self._login, self._password, isRemember, need_to_hash=False
         )
-        SID = results.model_dump()["tenats"][results.tenant_name]["studentRole"]["id"]
-        self._SID = SID
-        return results
+        format_output(self, result)
+        return result
