@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "asurso-api"
-version = "0.4.1"
+version = "0.4.2"
 description = "API-wrapper for NetSchool (ASURSO)"
 authors = ["Alekzum <68947902+Alekzum@users.noreply.github.com>"]
 readme = "README.md"

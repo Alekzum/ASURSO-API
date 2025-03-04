@@ -1,14 +1,9 @@
+from .exceptions import UnauthorizedError
 from typing import TypeVar, List, Union, overload, Type
 import hashlib
 import logging
 import base64
 import httpx
-
-
-class UnauthorizedError(ValueError):
-    msg: str
-    def __init__(self, msg: str):
-        self.msg = msg
 
 
 logger = logging.getLogger(__name__)
