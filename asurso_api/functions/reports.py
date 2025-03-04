@@ -107,8 +107,6 @@ async def get_current_performance_async(
 ) -> CurrentPerformance:
     r = await client.get(f"/services/reports/current/performance/{SID}")
     return parse_response(r, CurrentPerformance)
-    data = r.json()
-    return CurrentPerformance(**data)
 
 
 async def get_group_attestation_async(
@@ -117,20 +115,17 @@ async def get_group_attestation_async(
     r = await client.get(
         f"/services/reports/curator/group-attestation-for-student/{SID}"
     )
-    data = r.json()
-    return GroupAttestation(**data)
+    return parse_response(r, GroupAttestation)
 
 
 def get_current_performance_sync(client: httpx.Client, SID: str) -> CurrentPerformance:
     r = client.get(f"/services/reports/current/performance/{SID}")
-    data = r.json()
-    return CurrentPerformance(**data)
+    return parse_response(r, CurrentPerformance)
 
 
 def get_group_attestation_sync(client: httpx.Client, SID: str) -> GroupAttestation:
     r = client.get(f"/services/reports/curator/group-attestation-for-student/{SID}")
-    data = r.json()
-    return GroupAttestation(**data)
+    return parse_response(r, GroupAttestation)
 
 
 class AsyncGetReportMethods:
