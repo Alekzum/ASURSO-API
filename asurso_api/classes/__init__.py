@@ -25,7 +25,7 @@ class AsyncASURSO(AsyncMethods):
         self,
         login: str,
         password: str,
-        SID: str,
+        SID: str = "",
         timeout: int = 60,
         proxy: Union[httpx.URL, str, httpx.Proxy, None] = None,
     ):
@@ -33,7 +33,7 @@ class AsyncASURSO(AsyncMethods):
         Args:
             login (str): your ASURSO account's login.
             password (str): your ASURSO account's password.
-            SID (str): get via DevTools please.
+            SID (str, optional): student ID, will be got via method `.login()`
             timeout (int): httpx.AsyncClient's timeout in seconds. Defaults to 60.
             proxy (Union[httpx.Proxy, None], optional): proxy for httpx.AsyncClient. Defaults to None.
         """
@@ -61,14 +61,14 @@ class AsyncASURSO(AsyncMethods):
 class ASURSO(Methods):
     _login: str
     _password: str
-    _SID: str
     _client: httpx.Client
+    _SID: str = ""
 
     def __init__(
         self,
         login: str,
         password: str,
-        SID: str,
+        SID: str = "",
         timeout: int = 60,
         proxy: Union[httpx.URL, str, httpx.Proxy, None] = None,
     ):
@@ -77,7 +77,7 @@ class ASURSO(Methods):
         Args:
             login (str): your ASURSO account's login.
             password (str): your ASURSO account's password.
-            SID (str): get via DevTools please.
+            SID (str, optional): student ID, will be got via method `.login()`
             timeout (int): httpx.AsyncClient's timeout in seconds. Defaults to 60.
             proxy (Union[httpx.Proxy, None], optional): proxy for httpx.AsyncClient. Defaults to None.
         """

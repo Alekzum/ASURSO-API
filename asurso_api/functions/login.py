@@ -188,13 +188,19 @@ def login_sync(
 
 class AsyncLoginMethod:
     async def login(self: AsyncASURSO, isRemember=False):
-        return await login_async(
+        results = await login_async(
             self._client, self._login, self._password, isRemember, need_to_hash=False
         )
+        SID = results.model_dump()["tenats"][results.tenant_name]["studentRole"]["id"]
+        self._SID = SID
+        return results
 
 
 class LoginMethod:
     def login(self: ASURSO, isRemember=False):
-        return login_sync(
+        results = login_sync(
             self._client, self._login, self._password, isRemember, need_to_hash=False
         )
+        SID = results.model_dump()["tenats"][results.tenant_name]["studentRole"]["id"]
+        self._SID = SID
+        return results
