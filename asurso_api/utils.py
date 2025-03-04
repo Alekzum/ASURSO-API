@@ -20,8 +20,6 @@ def hash_password(password: str) -> str:
 def parse_response(r: httpx.Response, my_type: Type[T]) -> T: ...
 @overload
 def parse_response(r: httpx.Response, my_type: List[Type[T]]) -> List[T]: ...
-
-
 def parse_response(
     r: httpx.Response,
     my_type: Union[Type[T], List[Type[T]]],
@@ -46,11 +44,10 @@ def parse_response(
     return result
 
 
-def check_for_errors(r: httpx.Response):
+def check_for_errors(r: httpx.Response) -> None:
     if r.status_code == 401:
         d = r.json()
         if "responseStatus" not in d or "message" not in d["responseStatus"]:
             return
         raise UnauthorizedError(d["responseStatus"]["message"])
     return
-    ...
