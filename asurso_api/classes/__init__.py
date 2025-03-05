@@ -7,25 +7,22 @@ from ..functions.lessons import LessonsDay, Lesson
 from ..functions.organization import Organization
 from ..functions.reports import GroupAttestation, CurrentPerformance
 
-from dataclasses import dataclass
 from ..functions import AsyncMethods, Methods
 from ..utils import hash_password
 from typing import Union
 import httpx
 
 
-@dataclass
 class AsyncASURSO(AsyncMethods):
     _login: str
     _password: str
-    _SID: str
     _client: httpx.AsyncClient
+    _SID: str
 
     def __init__(
         self,
         login: str,
         password: str,
-        SID: str = "",
         timeout: int = 60,
         proxy: Union[httpx.URL, str, httpx.Proxy, None] = None,
     ):
@@ -40,7 +37,7 @@ class AsyncASURSO(AsyncMethods):
         self._login = login
         self._password = hash_password(password)
 
-        self._SID = SID
+        self._SID = ""
         self._client = httpx.AsyncClient(
             base_url="https://spo.asurso.ru", timeout=timeout, proxy=proxy
         )
@@ -57,18 +54,16 @@ class AsyncASURSO(AsyncMethods):
             raise builded_exc
 
 
-@dataclass
 class ASURSO(Methods):
     _login: str
     _password: str
     _client: httpx.Client
-    _SID: str = ""
+    _SID: str
 
     def __init__(
         self,
         login: str,
         password: str,
-        SID: str = "",
         timeout: int = 60,
         proxy: Union[httpx.URL, str, httpx.Proxy, None] = None,
     ):
@@ -84,7 +79,7 @@ class ASURSO(Methods):
         self._login = login
         self._password = hash_password(password)
 
-        self._SID = SID
+        self._SID = ""
         self._client = httpx.Client(
             base_url="https://spo.asurso.ru", timeout=timeout, proxy=proxy
         )
