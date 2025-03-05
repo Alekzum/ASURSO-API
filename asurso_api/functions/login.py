@@ -126,7 +126,7 @@ class StudentRole(BaseModel):
     students: List[Student]
 
 
-class Spo50(BaseModel):
+class Spo(BaseModel):
     first_name: str = Field(..., alias="firstName")
     is_trusted: bool = Field(..., alias="isTrusted")
     last_name: str = Field(..., alias="lastName")
@@ -136,7 +136,7 @@ class Spo50(BaseModel):
 
 
 class Tenants(BaseModel):
-    spo_50: Spo50
+    spo_50: Spo
 
 
 class LoginInfo(BaseModel):
@@ -187,8 +187,8 @@ def login_sync(
 
 
 def format_output(client: Union[AsyncASURSO, ASURSO], r: LoginInfo) -> None:
-    SID = r.model_dump()["tenants"][r.tenant_name]["studentRole"]["id"]
-    client._SID = SID
+    SID = r.tenants.model_dump()[r.tenant_name]["student_role"]["id"]
+    client._SID = str(SID)
 
 
 class AsyncLoginMethod:
