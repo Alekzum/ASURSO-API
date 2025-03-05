@@ -17,9 +17,15 @@ def hash_password(password: str) -> str:
 
 
 @overload
-def parse_response(r: httpx.Response, my_type: Type[T]) -> T: ...
+def parse_response(r: httpx.Response, my_type: Type[T]) -> T:
+    pass
+
+
 @overload
-def parse_response(r: httpx.Response, my_type: List[Type[T]]) -> List[T]: ...
+def parse_response(r: httpx.Response, my_type: List[Type[T]]) -> List[T]:
+    pass
+
+
 def parse_response(
     r: httpx.Response,
     my_type: Union[Type[T], List[Type[T]]],

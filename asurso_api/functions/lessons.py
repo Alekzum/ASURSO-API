@@ -76,7 +76,7 @@ class Task(BaseModel):
         return self.type
 
     def humanize(self):
-        add_info: "list[str]" = []
+        add_info = []
         if self.is_required:
             add_info.append("обязательная")
         else:
@@ -109,7 +109,7 @@ class Gradebook(BaseModel):
         return self.lesson_type
 
     def humanize(self, themes=True):
-        add_info: "list[str]" = []
+        add_info = []
         if themes:
             add_info.append(f"по темам ({', '.join([repr(t) for t in self.themes])})")
 
