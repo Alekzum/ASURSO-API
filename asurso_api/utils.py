@@ -1,4 +1,5 @@
 from .exceptions import UnauthorizedError
+from .functions.lessons import range_to_dates
 from typing import TypeVar, List, Union, overload, Type
 import hashlib
 import logging

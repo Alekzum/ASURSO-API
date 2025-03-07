@@ -168,7 +168,7 @@ def format(date: Union[datetime.date, datetime.datetime], rus=False) -> str:
     return date.strftime("%Y-%m-%d")
 
 
-def resolve_edge(
+def range_to_dates(
     start: Optional[Union[datetime.date, datetime.datetime, LessonsPeriod]] = None,
     end: Optional[Union[datetime.date, datetime.datetime]] = None,
     offset: Optional[int] = None,
@@ -270,7 +270,7 @@ async def get_lessons_async(
     end: Optional[Union[datetime.date, datetime.datetime]] = None,
     offset: Optional[int] = None,
 ) -> List[LessonsDay]:
-    start_, end_ = resolve_edge(start, end, offset)
+    start_, end_ = range_to_dates(start, end, offset)
 
     r = await client.get(
         f"services/students/{client._SID}/lessons/{format(start_, rus=False)}/{format(end_, rus=False)}"
@@ -286,7 +286,7 @@ def get_lessons_sync(
     end: Optional[Union[datetime.date, datetime.datetime]] = None,
     offset: Optional[int] = None,
 ) -> List[LessonsDay]:
-    start_, end_ = resolve_edge(start, end, offset)
+    start_, end_ = range_to_dates(start, end, offset)
 
     r = client.get(
         f"services/students/{client._SID}/lessons/{format(start_, rus=False)}/{format(end_, rus=False)}"
