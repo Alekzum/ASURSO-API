@@ -1,4 +1,5 @@
 from ..utils import parse_response, MyAsyncClient, MyClient
+from .. import enums
 from typing import List, Optional, Protocol
 from pydantic import BaseModel, Field
 import logging
@@ -30,7 +31,7 @@ class Term(BaseModel):
 class AcademicYear(BaseModel):
     id: int
     number: int
-    term_type: str = Field(..., alias="termType")
+    term_type: enums.TermType = Field(..., alias="termType")
     terms: List[Term]
 
 

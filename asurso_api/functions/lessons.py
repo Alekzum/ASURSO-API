@@ -8,8 +8,8 @@ from typing import (
     Type,
     cast,
 )
-from pydantic import BaseModel, Field
-from ..enums import LessonsPeriod
+from pydantic import BaseModel, Field, computed_field
+from .. import enums
 import datetime
 import logging
 
@@ -47,8 +47,13 @@ class Teacher(BaseModel):
     middle_name: str = Field(..., alias="middleName")
     id: int
 
+    @computed_field
+    @property
+    def full_name(self) -> str:
+        return " ".join([self.last_name, self.first_name, self.middle_name])
+
     def humanize(self):
-        return f"<Преподаватель {self.last_name} {self.first_name} {self.middle_name}>"
+        return f"<Преподаватель {self.full_name}>"
 
 
 class Timetable(BaseModel):
@@ -58,7 +63,7 @@ class Timetable(BaseModel):
 
 class Task(BaseModel):
     id: int
-    type: str
+    type: enums.EducationTaskType
     topic: str
     condition: Optional[str] = None
     is_required: bool = Field(..., alias="isRequired")
@@ -66,10 +71,10 @@ class Task(BaseModel):
     mark: Optional[str] = None
 
     @property
-    def ru_type(self):
-        if self.type == "Home":
+    def ru_type(self) -> str:
+        if self.type == enums.EducationTaskType.HOME:
             return "Домашняя работа"
-        return self.type
+        return self.type.name.title().replace("_", "")
 
     def humanize(self):
         add_info = []
@@ -142,12 +147,10 @@ class LessonsDay(BaseModel):
     is_holiday: bool = Field(..., alias="isHoliday")
     is_short: bool = Field(..., alias="isShort")
 
+    @computed_field
     @property
     def date(self) -> datetime.date:
-        if hasattr(self, "_d"):
-            return getattr(self, "_d")
-        _d = datetime.datetime.strptime(self.date_raw.split("T")[0], "%Y-%m-%d").date()
-        setattr(self, "_d", _d)
+        _d = datetime.date.fromisoformat(self.date_raw.split("T")[0])
         return _d
 
     @property
@@ -168,8 +171,8 @@ def format(date: Union[datetime.date, datetime.datetime], rus=False) -> str:
 async def get_lessons_async(
     client: MyAsyncClient,
     start: Union[
-        datetime.date, datetime.datetime, LessonsPeriod
-    ] = LessonsPeriod.THIS_WEEK,
+        datetime.date, datetime.datetime, enums.LessonsPeriod
+    ] = enums.LessonsPeriod.THIS_WEEK,
     end: Optional[Union[datetime.date, datetime.datetime]] = None,
     offset: Optional[int] = None,
 ) -> List[LessonsDay]:
@@ -184,8 +187,8 @@ async def get_lessons_async(
 def get_lessons_sync(
     client: MyClient,
     start: Union[
-        datetime.date, datetime.datetime, LessonsPeriod
-    ] = LessonsPeriod.THIS_WEEK,
+        datetime.date, datetime.datetime, enums.LessonsPeriod
+    ] = enums.LessonsPeriod.THIS_WEEK,
     end: Optional[Union[datetime.date, datetime.datetime]] = None,
     offset: Optional[int] = None,
 ) -> List[LessonsDay]:
@@ -201,8 +204,8 @@ class AsyncGetLessonsMethod:
     async def get_lessons(
         self: AsyncASURSO,
         start: Union[
-            datetime.date, datetime.datetime, LessonsPeriod
-        ] = LessonsPeriod.THIS_WEEK,
+            datetime.date, datetime.datetime, enums.LessonsPeriod
+        ] = enums.LessonsPeriod.THIS_WEEK,
         end: Optional[Union[datetime.date, datetime.datetime]] = None,
         offset: Optional[int] = None,
     ):
@@ -215,8 +218,8 @@ class GetLessonsMethod:
     def get_lessons(
         self: ASURSO,
         start: Union[
-            datetime.date, datetime.datetime, LessonsPeriod
-        ] = LessonsPeriod.THIS_WEEK,
+            datetime.date, datetime.datetime, enums.LessonsPeriod
+        ] = enums.LessonsPeriod.THIS_WEEK,
         end: Optional[Union[datetime.date, datetime.datetime]] = None,
         offset: Optional[int] = None,
     ):
