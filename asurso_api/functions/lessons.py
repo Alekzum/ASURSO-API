@@ -1,12 +1,9 @@
-from ..utils import parse_response, MyAsyncClient, MyClient
+from ..utils import parse_response, MyAsyncClient, MyClient, range_to_dates
 from typing import (
     List,
     Optional,
     Protocol,
     Union,
-    Tuple,
-    Dict,
-    Callable,
     TypeVar,
     Type,
     cast,
@@ -166,100 +163,6 @@ def format(date: Union[datetime.date, datetime.datetime], rus=False) -> str:
     if rus:
         return date.strftime("%d.%m.%Y")
     return date.strftime("%Y-%m-%d")
-
-
-def range_to_dates(
-    start: Optional[Union[datetime.date, datetime.datetime, LessonsPeriod]] = None,
-    end: Optional[Union[datetime.date, datetime.datetime]] = None,
-    offset: Optional[int] = None,
-) -> Tuple[datetime.date, datetime.date]:
-    """Get two datetime.date from some range"""
-    cur = datetime.datetime.now()
-    if isinstance(start, datetime.date):
-        start = datetime.datetime.combine(start, cur.time())
-
-    if isinstance(end, datetime.date):
-        end = datetime.datetime.combine(end, cur.time())
-
-    for_enum: Dict[LessonsPeriod, Tuple[datetime.datetime, datetime.datetime]] = {
-        # days
-        LessonsPeriod.PREVIOUS_DAY: (
-            cur - datetime.timedelta(days=1),
-            cur - datetime.timedelta(days=1),
-        ),
-        LessonsPeriod.TODAY: (cur, cur),
-        LessonsPeriod.NEXT_DAY: (
-            cur + datetime.timedelta(days=1),
-            cur + datetime.timedelta(days=1),
-        ),
-        # weeks
-        LessonsPeriod.PREVIOUS_WEEK: (
-            cur - datetime.timedelta(days=cur.weekday(), weeks=1),
-            cur - datetime.timedelta(days=cur.weekday() - 6, weeks=1),
-        ),
-        LessonsPeriod.THIS_WEEK: (
-            cur - datetime.timedelta(days=cur.weekday()),
-            cur - datetime.timedelta(days=cur.weekday() - 6),
-        ),
-        LessonsPeriod.NEXT_WEEK: (
-            cur - datetime.timedelta(days=cur.weekday(), weeks=-1),
-            cur - datetime.timedelta(days=cur.weekday() - 6, weeks=-1),
-        ),
-        # months
-        LessonsPeriod.PREVIOUS_MONTH: (
-            datetime.datetime(cur.year, cur.month - 1, 1),
-            datetime.datetime(cur.year, cur.month, 1) - datetime.timedelta(days=1),
-        ),
-        LessonsPeriod.THIS_MONTH: (
-            datetime.datetime(cur.year, cur.month, 1),
-            datetime.datetime(cur.year, cur.month + 1, 1) - datetime.timedelta(days=1),
-        ),
-        LessonsPeriod.NEXT_MONTH: (
-            datetime.datetime(cur.year, cur.month + 1, 1),
-            datetime.datetime(cur.year, cur.month + 2, 1) - datetime.timedelta(days=1),
-        ),
-    }
-
-    if isinstance(start, LessonsPeriod):
-        return for_enum[start][0].date(), for_enum[start][1].date()
-
-    N = None
-    D = datetime.datetime
-
-    start = cast(datetime.datetime, start)
-    offset = cast(int, offset)
-    end = cast(datetime.datetime, end)
-
-    for_dates: Dict[
-        Tuple[
-            Union[None, Type[datetime.datetime]],
-            Union[None, Type[int]],
-            Union[None, Type[datetime.datetime]],
-        ],
-        Callable[[], Union[Tuple[datetime.date, datetime.date], Exception]],
-    ] = {
-        (N, N, N): lambda: (cur.date(), (cur + datetime.timedelta(days=7)).date()),
-        (N, N, D): lambda: (cur.date(), end.date()),
-        (N, int, N): lambda: (
-            cur.date(),
-            (cur + datetime.timedelta(days=offset)).date(),
-        ),
-        (N, int, D): lambda: (
-            (end - datetime.timedelta(days=offset)).date(),
-            end.date(),
-        ),
-        (D, N, N): lambda: (start.date(), (start + datetime.timedelta(days=7)).date()),
-        (D, N, D): lambda: (start.date(), end.date()),
-        (D, int, N): lambda: (start.date(), (start + datetime.timedelta(days=offset))),
-        (D, int, D): lambda: ValueError(
-            "Use only (start+end, start+offset, offset+end) pair"
-        ),
-    }
-
-    result = for_dates[type(start), type(offset), type(end)]()
-    if isinstance(result, Exception):
-        raise result
-    return result
 
 
 async def get_lessons_async(
