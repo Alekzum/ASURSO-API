@@ -8,7 +8,7 @@ import os
 dotenv.load_dotenv(".env")
 
 
-pytestmark = pytest.mark.asyncio(loop_scope="session")
+pytestmark = pytest.mark.asyncio(loop_scope="package")
 async_client = MyAsyncClient(base_url="https://spo.asurso.ru", timeout=30)
 sync_client = MyClient(base_url="https://spo.asurso.ru", timeout=30)
 env = os.environ
