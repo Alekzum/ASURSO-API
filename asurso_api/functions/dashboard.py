@@ -32,7 +32,6 @@ class Dashboard(BaseModel):
 
 
 async def get_dashboard_async(client: MyAsyncClient) -> Dashboard:
-    SID = client._SID
     r = await client.get(f"services/students/{client._SID}/dashboard")
     return parse_response(r, Dashboard)
 
