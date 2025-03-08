@@ -47,7 +47,7 @@ class Teacher(BaseModel):
     middle_name: str = Field(..., alias="middleName")
     id: int
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def full_name(self) -> str:
         return " ".join([self.last_name, self.first_name, self.middle_name])
@@ -147,7 +147,7 @@ class LessonsDay(BaseModel):
     is_holiday: bool = Field(..., alias="isHoliday")
     is_short: bool = Field(..., alias="isShort")
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def date(self) -> datetime.date:
         _d = datetime.date.fromisoformat(self.date_raw.split("T")[0])
@@ -223,6 +223,4 @@ class GetLessonsMethod:
         end: Optional[Union[datetime.date, datetime.datetime]] = None,
         offset: Optional[int] = None,
     ):
-        return get_lessons_sync(
-            self._client, start=start, end=end, offset=offset
-        )
+        return get_lessons_sync(self._client, start=start, end=end, offset=offset)

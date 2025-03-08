@@ -24,7 +24,7 @@ class MonthsWithDay(BaseModel):
     raw_month: dict = Field(..., alias="month")
     raw_days_with_lessons: List[str] = Field(..., alias="daysWithLessons")
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def days_with_lessons(self) -> List[datetime.date]:
         return [
@@ -32,7 +32,7 @@ class MonthsWithDay(BaseModel):
             for d in self.raw_days_with_lessons
         ]
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def month(self) -> int:
         return self.raw_month["num"] - 1
@@ -43,12 +43,12 @@ class DaysWithMark(BaseModel):
     mark_values: List[enums.MarkValue] = Field(..., alias="markValues")
     absence_type: Optional[enums.AbsenceType] = Field(None, alias="absenceType")
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def mark(self) -> str:
         return mark_to_text(self.absence_type) if self.absence_type else ", ".join([mark_to_text(i) for i in self.mark_values])
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def day(self) -> datetime.date:
         return datetime.date.fromisoformat(self.raw_day.split("T")[0])
@@ -74,7 +74,7 @@ class Student(BaseModel):
     middle_name: str = Field(..., alias="middleName")
     id: int
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def full_name(self) -> str:
         return " ".join([self.last_name, self.first_name, self.middle_name])
@@ -86,7 +86,7 @@ class Teacher(BaseModel):
     middle_name: str = Field(..., alias="middleName")
     id: int
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def full_name(self) -> str:
         return " ".join([self.last_name, self.first_name, self.middle_name])
