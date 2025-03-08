@@ -188,12 +188,16 @@ class EnrollmentReason(Enum):
     BACK_FROM_ARMY = "BackFromArmy"
     OTHER_REASONS = "OtherReasons"
     AVERAGE_ATTESTATION_POINT = "AverageAttestationPoint"
-    AVERAGE_ATTESTATION_POINT_AND_ADDITIONAL_EXAMS = "AverageAttestationPointAndAdditionalExams"
+    AVERAGE_ATTESTATION_POINT_AND_ADDITIONAL_EXAMS = (
+        "AverageAttestationPointAndAdditionalExams"
+    )
     BACK_FROM_ACADEMIC_VACATION = "BackFromAcademicVacation"
 
 
 class RetirementReason(Enum):
-    TRANSFER_ON_OTHER_EDUCATION_FORM_IN_THIS_ORGANIZATION = "TransferOnOtherEducationFormInThisOrganization"
+    TRANSFER_ON_OTHER_EDUCATION_FORM_IN_THIS_ORGANIZATION = (
+        "TransferOnOtherEducationFormInThisOrganization"
+    )
     TRANSFER_IN_OTHER_EDUCATION_ORGANIZATIONS = "TransferInOtherEducationOrganizations"
     DISEASE = "Disease"
     PERSONAL_DESIRE = "PersonalDesire"
@@ -214,7 +218,9 @@ class RetirementReason(Enum):
 
 
 class RetirementReasonsWithoutGraduation(Enum):
-    TRANSFER_ON_OTHER_EDUCATION_FORM_IN_THIS_ORGANIZATION = "TransferOnOtherEducationFormInThisOrganization"
+    TRANSFER_ON_OTHER_EDUCATION_FORM_IN_THIS_ORGANIZATION = (
+        "TransferOnOtherEducationFormInThisOrganization"
+    )
     TRANSFER_IN_OTHER_EDUCATION_ORGANIZATIONS = "TransferInOtherEducationOrganizations"
     DISEASE = "Disease"
     PERSONAL_DESIRE = "PersonalDesire"
@@ -241,12 +247,30 @@ class MarkRating(Enum):
     FOUR = "Four"
     FIVE = "Five"
 
+    def to_value(self):
+        return {
+            MarkRating.TWO: "2",
+            MarkRating.THREE: "3",
+            MarkRating.FOUR: "4",
+            MarkRating.FIVE: "5",
+            MarkRating.SUCCESS: "зачёт",
+            MarkRating.FAIL: "незачет",
+        }[self]
+
 
 class AbsenceType(Enum):
     IS_LATE = "IsLate"
     IS_ABSENT_BY_VALID_REASON = "IsAbsentByValidReason"
     IS_ABSENT_BY_NOT_VALID_REASON = "IsAbsentByNotValidReason"
     SICK_LEAVE = "SickLeave"
+
+    def to_rus_mark(self):
+        return {
+            AbsenceType.IS_ABSENT_BY_NOT_VALID_REASON: "нп",
+            AbsenceType.IS_ABSENT_BY_VALID_REASON: "уп",
+            AbsenceType.IS_LATE: "оп",
+            AbsenceType.SICK_LEAVE: "б",
+        }[self]
 
 
 class MilitaryRank(Enum):
@@ -793,5 +817,3 @@ class FreeEducationReason(Enum):
 class LicenseInfoType(Enum):
     LICENSE = "License"
     ACCREDITATION = "Accreditation"
-
-

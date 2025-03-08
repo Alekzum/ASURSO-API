@@ -6,3 +6,11 @@ class MarkValue(Enum):
     THREE = "Three"
     FOUR = "Four"
     FIVE = "Five"
+
+    def to_digit(self):
+        return {
+            MarkValue.TWO: 2,
+            MarkValue.THREE: 3,
+            MarkValue.FOUR: 4,
+            MarkValue.FIVE: 5,
+        }[self]

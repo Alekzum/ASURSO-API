@@ -36,11 +36,11 @@ class AcademicYear(BaseModel):
 
 
 class FinalMark(BaseModel):
-    value: Optional[str] = None
+    value: Optional[enums.MarkValue] = None
 
 
 class FieldMark(BaseModel):
-    value: Optional[str] = None
+    value: Optional[enums.MarkValue] = None
 
 
 class Marks(BaseModel):
@@ -54,17 +54,17 @@ class Subject(BaseModel):
 
 
 class Attestation(BaseModel):
-    academic_years: Optional[List[AcademicYear]] = Field(None, alias="academicYears")
+    academic_years: List[AcademicYear] = Field(..., alias="academicYears")
     subjects: List[Subject]
 
 
 async def get_attestation_async(client: MyAsyncClient) -> Attestation:
-    r = await client.get(f"services/students/{client._SID}/dashboard")
+    r = await client.get(f"services/students/{client._SID}/attestation")
     return parse_response(r, Attestation)
 
 
 def get_attestation_sync(client: MyClient) -> Attestation:
-    r = client.get(f"services/students/{client._SID}/dashboard")
+    r = client.get(f"services/students/{client._SID}/attestation")
     return parse_response(r, Attestation)
 
 
