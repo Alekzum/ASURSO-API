@@ -22,15 +22,17 @@ class ASURSO(Protocol):
 
 
 class TitleItem(BaseModel):
-    language_code: str = Field(..., alias="value")
-    value: str = Field(..., alias="value")
+    language_code: str
+    value: str
 
 
 class LessonsMenu(BaseModel):
     is_enabled: bool = Field(..., alias="isEnabled")
     session_table_enabled: bool = Field(..., alias="sessionTableEnabled")
     examination_enabled: bool = Field(..., alias="examinationEnabled")
-    prof_module_examination_enabled: bool = Field(..., alias="profModuleExaminationEnabled")
+    prof_module_examination_enabled: bool = Field(
+        ..., alias="profModuleExaminationEnabled"
+    )
     courseworks_enabled: bool = Field(..., alias="courseworksEnabled")
 
 
@@ -52,22 +54,30 @@ class ForeignInstallation(BaseModel):
 
 
 class AvailableLanguage(BaseModel):
-    key: str = Field(...)
-    value: str = Field(...)
+    key: str
+    value: str
 
 
 class Info(BaseModel):
-    title: List[TitleItem] = Field(..., alias="title")
+    title: List[TitleItem]
     is_file_storage_available: bool = Field(..., alias="isFileStorageAvailable")
-    is_supplementary_education_certificates_available: bool = Field(..., alias="isSupplementaryEducationCertificatesAvailable")
-    is_edit_student_factual_hours_available_for_organization: bool = Field(..., alias="isEditStudentFactualHoursAvailableForOrganization")
-    is_factual_hours_available_systemwide: bool = Field(..., alias="isFactualHoursAvailableSystemwide")
+    is_supplementary_education_certificates_available: bool = Field(
+        ..., alias="isSupplementaryEducationCertificatesAvailable"
+    )
+    is_edit_student_factual_hours_available_for_organization: bool = Field(
+        ..., alias="isEditStudentFactualHoursAvailableForOrganization"
+    )
+    is_factual_hours_available_systemwide: bool = Field(
+        ..., alias="isFactualHoursAvailableSystemwide"
+    )
     are_chats_enabled: bool = Field(..., alias="areChatsEnabled")
     is_ern_enabled: bool = Field(..., alias="isErnEnabled")
     is_employment_enabled: bool = Field(..., alias="isEmploymentEnabled")
     is_reports_menu_enabled: bool = Field(..., alias="isReportsMenuEnabled")
     is_portfolio_menu_enabled: bool = Field(..., alias="isPortfolioMenuEnabled")
-    is_administration_menu_enabled: bool = Field(..., alias="isAdministrationMenuEnabled")
+    is_administration_menu_enabled: bool = Field(
+        ..., alias="isAdministrationMenuEnabled"
+    )
     is_org_license_enabled: bool = Field(..., alias="isOrgLicenseEnabled")
     is_org_details_enabled: bool = Field(..., alias="isOrgDetailsEnabled")
     lessons_menu: LessonsMenu = Field(..., alias="lessonsMenu")
@@ -75,7 +85,9 @@ class Info(BaseModel):
     users_menu: UsersMenu = Field(..., alias="usersMenu")
     foreign_installation: ForeignInstallation = Field(..., alias="foreignInstallation")
     default_language: str = Field(..., alias="defaultLanguage")
-    available_languages: List[AvailableLanguage] = Field(..., alias="availableLanguages")
+    available_languages: List[AvailableLanguage] = Field(
+        ..., alias="availableLanguages"
+    )
     import_encoding: str = Field(..., alias="importEncoding")
 
 

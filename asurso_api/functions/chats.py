@@ -1,4 +1,5 @@
 from ..utils import parse_response, MyAsyncClient, MyClient
+from .. import enums
 from pydantic import BaseModel, Field
 from typing import Protocol, List
 import logging
@@ -25,7 +26,7 @@ class Chat(BaseModel):
     num: int
     id: int
     name: str
-    chat_type: str = Field(..., alias="chatType")
+    chat_type: enums.ChatType = Field(..., alias="chatType")
     count_of_members: int = Field(..., alias="countOfMembers")
     admin_name: str = Field(..., alias="adminName")
 

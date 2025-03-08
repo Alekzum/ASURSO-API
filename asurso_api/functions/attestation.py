@@ -48,9 +48,9 @@ class Marks(BaseModel):
 
 
 class Subject(BaseModel):
-    final_mark: Optional[FinalMark] = Field(default=None, alias="finalMark")
-    marks: Optional[Marks] = None
     name: str
+    marks: Marks
+    final_mark: FinalMark = Field(..., alias='finalMark')
 
 
 class Attestation(BaseModel):

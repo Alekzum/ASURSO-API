@@ -52,9 +52,6 @@ class Teacher(BaseModel):
     def full_name(self) -> str:
         return " ".join([self.last_name, self.first_name, self.middle_name])
 
-    def humanize(self):
-        return f"<Преподаватель {self.full_name}>"
-
 
 class Timetable(BaseModel):
     classroom: Classroom
@@ -76,30 +73,13 @@ class Task(BaseModel):
             return "Домашняя работа"
         return self.type.name.title().replace("_", "")
 
-    def humanize(self):
-        add_info = []
-        if self.is_required:
-            add_info.append("обязательная")
-        else:
-            add_info.append("не обязательная")
-        add_info.append(f"{self.topic!r}")
-
-        if self.condition:
-            add_info.append(f"с условием {self.condition}")
-        if self.attachments:
-            add_info.append(f"с прикреплениями: {self.attachments}")
-        if self.mark:
-            add_info.append(f"с оценкой {self.mark!r}")
-
-        add_info_str = ", ".join([""] + add_info) if add_info else ""
-        return f"<{self.ru_type}{add_info_str}>"
-
 
 class Gradebook(BaseModel):
     id: int
     themes: List[str]
-    lesson_type: str = Field(..., alias="lessonType")
+    lesson_type: enums.ThematicPlanLessonType = Field(..., alias="lessonType")
     tasks: List[Task]
+    absence_type: Optional[enums.AbsenceType] = Field(None, alias='absenceType')
 
     @property
     def ru_lesson_type(self):
@@ -109,36 +89,13 @@ class Gradebook(BaseModel):
             return "Практическая работа"
         return self.lesson_type
 
-    def humanize(self, themes=True):
-        add_info = []
-        if themes:
-            add_info.append(f"по темам ({', '.join([repr(t) for t in self.themes])})")
-
-        add_info_str = ", ".join([""] + add_info) if add_info else ""
-
-        return f"<{self.ru_lesson_type}{add_info_str}: ({', '.join([t.humanize() for t in self.tasks]) or 'без задач'})>"
-
 
 class Lesson(BaseModel):
-    start_time: str = Field(..., alias="startTime")
-    end_time: str = Field(..., alias="endTime")
+    start_time: Optional[str] = Field(None, alias='startTime')
+    end_time: Optional[str] = Field(None, alias='endTime')
     name: Optional[str] = None
     timetable: Optional[Timetable] = None
     gradebook: Optional[Gradebook] = None
-
-    def humanize(self):
-        additional_info = []
-        timetable = self.timetable
-        if timetable:
-            classroom = timetable.classroom
-            additional_info.append(f"в кабинете {classroom.name}")
-
-        gradebook = self.gradebook
-        if gradebook:
-            additional_info.append(f"с заданием ({gradebook.humanize()})")
-
-        add_info = ", ".join([""] + additional_info) if additional_info else ""
-        return f"<Пара с {self.start_time} - {self.end_time}: {self.name or '*неизвестно*'}{add_info}>"
 
 
 class LessonsDay(BaseModel):
@@ -157,9 +114,6 @@ class LessonsDay(BaseModel):
     def ru_date(self) -> str:
         """something like "01.01.2021" """
         return format(self.date, rus=True)
-
-    def humanize(self):
-        return f"<Занятия на {self.ru_date}: {', '.join([lesson.humanize() for lesson in self.lessons])}>"
 
 
 def format(date: Union[datetime.date, datetime.datetime], rus=False) -> str:

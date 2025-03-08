@@ -22,56 +22,56 @@ class ASURSO(Protocol):
 
 
 class Address(BaseModel):
-    kladr: str
-    mail_address: str = Field(..., alias="mailAddress")
     region: str
     settlement: str
-
-
-class Attestation(BaseModel):
-    is_enabled: bool = Field(..., alias="isEnabled")
-
-
-class EService(BaseModel):
-    cache_enrollee_list_timeout: int = Field(..., alias="cacheEnrolleeListTimeout")
-    cache_enrollee_timeout: int = Field(..., alias="cacheEnrolleeTimeout")
-    cache_specialty_list_timeout: int = Field(..., alias="cacheSpecialtyListTimeout")
-    is_enabled: bool = Field(..., alias="isEnabled")
-    url: str
-    use_rest_integration: bool = Field(..., alias="useRestIntegration")
-
-
-class FactHours(BaseModel):
-    is_enabled: bool = Field(..., alias="isEnabled")
-
-
-class VkChats(BaseModel):
-    community_id: str = Field(..., alias="communityId")
-    community_token: str = Field(..., alias="communityToken")
-
-
-class Administration(BaseModel):
-    attestation: Attestation
-    e_service: EService = Field(..., alias="eService")
-    fact_hours: FactHours = Field(..., alias="factHours")
-    organization_id: str = Field(..., alias="organizationId")
-    vk_chats: VkChats = Field(..., alias="vkChats")
+    mail_address: str = Field(..., alias='mailAddress')
+    kladr: str
 
 
 class BankingDetails(BaseModel):
-    founder_type: str = Field(..., alias="founderType")
-    founders: str
+    okved: str
     inn: str
     kpp: str
     ogrn: str
-    okato: str
-    okogu: str
-    okopth: str
-    okpo: str
-    okths: str
     oktmo: str
-    okved: str
+    okopth: str
+    okths: str
+    okpo: str
     others: str
+    okogu: str
+    founder_type: str = Field(..., alias='founderType')
+    founders: str
+    okato: str
+
+
+class EService(BaseModel):
+    url: str
+    is_enabled: bool = Field(..., alias='isEnabled')
+    cache_enrollee_list_timeout: int = Field(..., alias='cacheEnrolleeListTimeout')
+    cache_specialty_list_timeout: int = Field(..., alias='cacheSpecialtyListTimeout')
+    cache_enrollee_timeout: int = Field(..., alias='cacheEnrolleeTimeout')
+    use_rest_integration: bool = Field(..., alias='useRestIntegration')
+
+
+class Attestation(BaseModel):
+    is_enabled: bool = Field(..., alias='isEnabled')
+
+
+class FactHours(BaseModel):
+    is_enabled: bool = Field(..., alias='isEnabled')
+
+
+class VkChats(BaseModel):
+    community_id: str = Field(..., alias='communityId')
+    community_token: str = Field(..., alias='communityToken')
+
+
+class Administration(BaseModel):
+    e_service: EService = Field(..., alias='eService')
+    organization_id: str = Field(..., alias='organizationId')
+    attestation: Attestation
+    fact_hours: FactHours = Field(..., alias='factHours')
+    vk_chats: VkChats = Field(..., alias='vkChats')
 
 
 class Organization(BaseModel):

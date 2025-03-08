@@ -46,7 +46,9 @@ class DaysWithMark(BaseModel):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def mark(self) -> str:
-        return mark_to_text(self.absence_type) if self.absence_type else ", ".join([mark_to_text(i) for i in self.mark_values])
+        if self.absence_type:
+            return mark_to_text(self.absence_type)
+        return ", ".join([mark_to_text(i) for i in self.mark_values])
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -68,7 +70,7 @@ class CurrentPerformance(BaseModel):
 
 
 # Group attestation
-class Student(BaseModel):
+class People(BaseModel):
     first_name: str = Field(..., alias="firstName")
     last_name: str = Field(..., alias="lastName")
     middle_name: str = Field(..., alias="middleName")
@@ -80,36 +82,35 @@ class Student(BaseModel):
         return " ".join([self.last_name, self.first_name, self.middle_name])
 
 
-class Teacher(BaseModel):
-    first_name: str = Field(..., alias="firstName")
-    last_name: str = Field(..., alias="lastName")
-    middle_name: str = Field(..., alias="middleName")
+class Student(People):
+    pass
+
+
+class Teacher(People):
+    pass
+
+
+class Mark(BaseModel):
+    field: Optional[float] = Field(None, pattern=r"\d+")
+
+
+class SomeWork(BaseModel):
+    marks: Mark
+    name: str
     id: int
 
-    @computed_field  # type: ignore[prop-decorator]
-    @property
-    def full_name(self) -> str:
-        return " ".join([self.last_name, self.first_name, self.middle_name])
 
-
-class Subject(BaseModel):
+class Subject(SomeWork):
     examination_type: enums.ExaminationType = Field(..., alias="examinationType")
     teacher: Optional[Teacher] = None
-    marks: Dict[str, Any]
-    name: str
-    id: int
 
 
-class ProfModule(BaseModel):
-    marks: Dict[str, Any]
-    name: str
-    id: int
+class ProfModule(SomeWork):
+    pass
 
 
-class CourseWork(BaseModel):
-    marks: Dict[str, Any]
-    name: str
-    id: int
+class CourseWork(SomeWork):
+    pass
 
 
 class GroupAttestation(BaseModel):
@@ -132,7 +133,7 @@ def mark_to_text(obj: Union[enums.MarkValue, enums.AbsenceType]) -> str:
         enums.AbsenceType.IS_ABSENT_BY_NOT_VALID_REASON: "нп",
         enums.AbsenceType.IS_ABSENT_BY_VALID_REASON: "уп",
         enums.AbsenceType.IS_LATE: "оп",
-        enums.AbsenceType.SICK_LEAVE: "б"
+        enums.AbsenceType.SICK_LEAVE: "б",
     }[obj]
 
 
