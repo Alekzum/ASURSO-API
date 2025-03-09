@@ -264,7 +264,7 @@ class AbsenceType(Enum):
     IS_ABSENT_BY_NOT_VALID_REASON = "IsAbsentByNotValidReason"
     SICK_LEAVE = "SickLeave"
 
-    def to_rus_mark(self):
+    def to_value(self):
         return {
             AbsenceType.IS_ABSENT_BY_NOT_VALID_REASON: "нп",
             AbsenceType.IS_ABSENT_BY_VALID_REASON: "уп",

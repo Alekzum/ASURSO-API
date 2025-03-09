@@ -7,10 +7,10 @@ class MarkValue(Enum):
     FOUR = "Four"
     FIVE = "Five"
 
-    def to_digit(self):
+    def to_value(self):
         return {
-            MarkValue.TWO: 2,
-            MarkValue.THREE: 3,
-            MarkValue.FOUR: 4,
-            MarkValue.FIVE: 5,
+            MarkValue.TWO: "2",
+            MarkValue.THREE: "3",
+            MarkValue.FOUR: "4",
+            MarkValue.FIVE: "5",
         }[self]
