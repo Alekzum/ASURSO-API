@@ -59,6 +59,13 @@ class TermType(Enum):
     TRIMESTER = "Trimester"
     COURSE = "Course"
 
+    def to_value(self):
+        return {
+            TermType.SEMESTER: "Семестр",
+            TermType.TRIMESTER: "Триместр",
+            TermType.COURSE: "Курс",
+        }[self]
+
 
 class ExaminationStage(Enum):
     TUTORIAL = "Tutorial"
