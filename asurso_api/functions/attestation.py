@@ -1,6 +1,6 @@
 from ..utils import parse_response, MyAsyncClient, MyClient
 from .. import enums
-from typing import List, Optional, Protocol
+from typing import List, Optional, Protocol, Dict, Any
 from pydantic import BaseModel, Field
 import logging
 
@@ -45,6 +45,12 @@ class FieldMark(BaseModel):
 
 class Marks(BaseModel):
     field: Optional[FieldMark] = Field(None, pattern=r"^\d$")
+    raw: Dict = Field(default_factory=lambda: dict())
+
+    def __init__(self, **data):
+        """Just save original dict"""
+        super().__init__(**data)
+        self.raw = data
 
 
 class Subject(BaseModel):
