@@ -35,17 +35,18 @@ class AsyncASURSO(AsyncMethods):
         password: str,
         timeout: int = 60,
         proxy: Union[httpx.URL, str, httpx.Proxy, None] = None,
+        password_is_hashed: bool = False
     ):
         """
         Args:
             login (str): your ASURSO account's login.
             password (str): your ASURSO account's password.
-            SID (str, optional): student ID, will be got via method `.login()`
             timeout (int): httpx.AsyncClient's timeout in seconds. Defaults to 60.
             proxy (Union[httpx.Proxy, None], optional): proxy for httpx.AsyncClient. Defaults to None.
+            password_is_hashed (bool): password is needed to be hashed or not. Defaults to False.
         """
         self._login = login
-        self._password = hash_password(password)
+        self._password = password if password_is_hashed else hash_password(password)
 
         self._SID = ""
         self._client = MyAsyncClient(
@@ -76,18 +77,19 @@ class ASURSO(Methods):
         password: str,
         timeout: int = 60,
         proxy: Union[httpx.URL, str, httpx.Proxy, None] = None,
+        password_is_hashed: bool = False
     ):
         """Just create ASURSO object to use this API
 
         Args:
             login (str): your ASURSO account's login.
             password (str): your ASURSO account's password.
-            SID (str, optional): student ID, will be got via method `.login()`
             timeout (int): httpx.AsyncClient's timeout in seconds. Defaults to 60.
             proxy (Union[httpx.Proxy, None], optional): proxy for httpx.AsyncClient. Defaults to None.
+            password_is_hashed (bool): password is needed to be hashed or not. Defaults to False.
         """
         self._login = login
-        self._password = hash_password(password)
+        self._password = password if password_is_hashed else hash_password(password)
 
         self._SID = ""
         self._client = MyClient(
