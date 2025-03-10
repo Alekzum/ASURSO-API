@@ -6,7 +6,16 @@ from ..functions.info import Info
 from ..functions.lessons import LessonsDay, Lesson
 from ..functions.organization import Organization
 from ..functions.reports import GroupAttestation, CurrentPerformance
-from ..functions import attestation, chats, dashboard, login, info, lessons, organization, reports
+from ..functions import (
+    attestation,
+    chats,
+    dashboard,
+    login,
+    info,
+    lessons,
+    organization,
+    reports,
+)
 
 from ..functions import AsyncMethods, Methods
 from ..utils import hash_password, MyClient, MyAsyncClient
