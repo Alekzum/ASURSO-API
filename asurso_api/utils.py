@@ -78,7 +78,7 @@ def range_to_dates(
     if isinstance(start, LessonsPeriod):
         return for_enum[start][0].date(), for_enum[start][1].date()
 
-    N = None
+    N = type(None)
     D = datetime.datetime
 
     start = cast(datetime.datetime, start)
@@ -87,9 +87,9 @@ def range_to_dates(
 
     for_dates: Dict[
         Tuple[
-            Union[None, Type[datetime.datetime]],
-            Union[None, Type[int]],
-            Union[None, Type[datetime.datetime]],
+            Union[Type[None], Type[datetime.datetime]],
+            Union[Type[None], Type[int]],
+            Union[Type[None], Type[datetime.datetime]],
         ],
         Callable[[], Union[Tuple[datetime.date, datetime.date], Exception]],
     ] = {
