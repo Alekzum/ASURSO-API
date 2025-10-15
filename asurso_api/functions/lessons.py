@@ -46,32 +46,31 @@ class Classroom(BaseModel):
         raise ValueError("???")
 
     @field_validator("raw_building", "raw_buildingName", "raw_buildingId")
-    def mutually_exclusive1(cls, value: str | int, info: ValidationInfo):
-        match info.field_name:
-            case "raw_building":
-                if (
-                    info.data.get("buildingName", None)
-                    and info.data.get("buildingId", None) is None
-                ):
-                    return value
-                elif (
-                    info.data.get("buildingName", None)
-                    or info.data.get("buildingId", None) is not None
-                ):
-                    raise ValueError(
-                        "Fields buildingName and buildingId is already provided! "
-                        "Only use fields 'buildingName' and 'buildingID' or 'building'"
-                    )
-
-            case "raw_buildingName" | "raw_buildingId":
-                if info.data.get("building", None) is None:
-                    return value
+    def mutually_exclusive1(cls, value: Union[str, int], info: ValidationInfo):
+        if info.field_name == "raw_building":
+            if (
+                info.data.get("buildingName", None)
+                and info.data.get("buildingId", None) is None
+            ):
+                return value
+            elif (
+                info.data.get("buildingName", None)
+                or info.data.get("buildingId", None) is not None
+            ):
                 raise ValueError(
-                    "Field building is already provided! "
+                    "Fields buildingName and buildingId is already provided! "
                     "Only use fields 'buildingName' and 'buildingID' or 'building'"
                 )
-            case _:
-                raise ValueError(f"wtf, field_name={info.field_name}")
+
+        elif info.field_name in {"raw_buildingName", "raw_buildingId"}:
+            if info.data.get("building", None) is None:
+                return value
+            raise ValueError(
+                "Field building is already provided! "
+                "Only use fields 'buildingName' and 'buildingID' or 'building'"
+            )
+
+        raise ValueError(f"wtf, field_name={info.field_name}")
 
     def humanize(self):
         return f"<Кабинет {self.name} в корпусе {self.building}>"
