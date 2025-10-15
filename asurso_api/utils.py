@@ -17,6 +17,7 @@ import logging
 import datetime
 import base64
 import httpx
+from json import JSONDecodeError
 
 
 logger = logging.getLogger(__name__)
@@ -159,9 +160,12 @@ def parse_response(
 
 def check_for_errors(r: httpx.Response) -> None:
     if r.status_code == 401:
-        d = r.json()
+        try:
+            d = r.json()
+        except JSONDecodeError:
+            raise UnauthorizedError("without message")
         if "responseStatus" not in d or "message" not in d["responseStatus"]:
-            return
+            raise UnauthorizedError("without message")
         raise UnauthorizedError(d["responseStatus"]["message"])
     return
 

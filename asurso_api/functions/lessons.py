@@ -6,7 +6,7 @@ from typing import (
     Union,
     TypeVar,
 )
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, Field, computed_field, field_validator, ValidationInfo
 from .. import enums
 import datetime
 import logging
@@ -31,9 +31,47 @@ class ASURSO(Protocol):
 
 
 class Classroom(BaseModel):
-    building: str
+    raw_buildingName: Optional[str] = Field(None, alias="buildingName")
+    raw_buildingId: Optional[int] = Field(None, alias="buildingId")
+    raw_building: Optional[str] = Field(None, alias="building")
     name: str
     id: int
+
+    @computed_field
+    def building(self) -> str:
+        if self.raw_building:
+            return self.raw_building
+        elif self.raw_buildingName:
+            return self.raw_buildingName
+        raise ValueError("???")
+
+    @field_validator("raw_building", "raw_buildingName", "raw_buildingId")
+    def mutually_exclusive1(cls, value: str | int, info: ValidationInfo):
+        match info.field_name:
+            case "raw_building":
+                if (
+                    info.data.get("buildingName", None)
+                    and info.data.get("buildingId", None) is None
+                ):
+                    return value
+                elif (
+                    info.data.get("buildingName", None)
+                    or info.data.get("buildingId", None) is not None
+                ):
+                    raise ValueError(
+                        "Fields buildingName and buildingId is already provided! "
+                        "Only use fields 'buildingName' and 'buildingID' or 'building'"
+                    )
+
+            case "raw_buildingName" | "raw_buildingId":
+                if info.data.get("building", None) is None:
+                    return value
+                raise ValueError(
+                    "Field building is already provided! "
+                    "Only use fields 'buildingName' and 'buildingID' or 'building'"
+                )
+            case _:
+                raise ValueError(f"wtf, field_name={info.field_name}")
 
     def humanize(self):
         return f"<Кабинет {self.name} в корпусе {self.building}>"
@@ -77,7 +115,7 @@ class Gradebook(BaseModel):
     themes: List[str]
     lesson_type: enums.ThematicPlanLessonType = Field(..., alias="lessonType")
     tasks: List[Task]
-    absence_type: Optional[enums.AbsenceType] = Field(None, alias='absenceType')
+    absence_type: Optional[enums.AbsenceType] = Field(None, alias="absenceType")
 
     @property
     def ru_lesson_type(self):
@@ -89,8 +127,8 @@ class Gradebook(BaseModel):
 
 
 class Lesson(BaseModel):
-    start_time: Optional[str] = Field(None, alias='startTime')
-    end_time: Optional[str] = Field(None, alias='endTime')
+    start_time: Optional[str] = Field(None, alias="startTime")
+    end_time: Optional[str] = Field(None, alias="endTime")
     name: Optional[str] = None
     timetable: Optional[Timetable] = None
     gradebook: Optional[Gradebook] = None
