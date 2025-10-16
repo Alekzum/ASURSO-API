@@ -125,21 +125,17 @@ def hash_password(password: str) -> str:
 
 
 @overload
-def parse_response(r: httpx.Response, my_type: Type[T]) -> T:
-    pass
-
-
+def parse_response(r: httpx.Response, my_type: Type[T]) -> T: ...
 @overload
-def parse_response(r: httpx.Response, my_type: List[Type[T]]) -> List[T]:
-    pass
-
-
+def parse_response(r: httpx.Response, my_type: List[Type[T]]) -> List[T]: ...
 def parse_response(
     r: httpx.Response,
     my_type: Union[Type[T], List[Type[T]]],
 ) -> Union[T, List[T]]:
     check_for_errors(r)
     data = r.json()
+    for (cookie_name, cookie_value) in dict(r.cookies).items():
+        data[f"__cookie__{cookie_name}"] = cookie_value
     logger.debug(f"{r.url=}, {data=}")
 
     if isinstance(my_type, list) and isinstance(my_type[0], type):

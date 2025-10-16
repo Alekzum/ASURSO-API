@@ -1,6 +1,6 @@
 from ..utils import hash_password, parse_response, MyAsyncClient, MyClient
 from pydantic import BaseModel, Field
-from typing import Protocol, List, Union
+from typing import Protocol, List, Union, Optional, overload, Literal
 from httpx import Response
 import logging
 
@@ -140,10 +140,21 @@ class Tenants(BaseModel):
 
 
 class LoginInfo(BaseModel):
+    cookies_UID: str = Field(..., alias="__cookie__UID")
     install_name: str = Field(..., alias="installName")
     local_network: bool = Field(..., alias="localNetwork")
     tenant_name: str = Field(..., alias="tenantName")
     tenants: Tenants
+
+
+class LoginInfoPerm(LoginInfo):
+    cookies_AspNetCoreCookies: str = Field(..., alias="__cookie__.AspNetCore.Cookies")
+    cookies_AspNetCoreSession: None = None
+
+
+class LoginInfoTemp(LoginInfo):
+    cookies_AspNetCoreCookies: None = None
+    cookies_AspNetCoreSession: str = Field(..., alias="__cookie__.AspNetCore.Session")
 
 
 def _format_output(client: Union[MyAsyncClient, MyClient], result: LoginInfo) -> None:
@@ -151,9 +162,9 @@ def _format_output(client: Union[MyAsyncClient, MyClient], result: LoginInfo) ->
     client._SID = str(SID)
 
 
-def _parse(client: Union[MyClient, MyAsyncClient], r: Response):
+def _parse(client: Union[MyClient, MyAsyncClient], r: Response, is_remember: bool):
     client.cookies.update(r.cookies)
-    result = parse_response(r, LoginInfo)
+    result = parse_response(r, LoginInfoPerm if is_remember else LoginInfoTemp)
     _format_output(client, result)
     return result
 
@@ -164,7 +175,7 @@ async def login_async(
     password: str,
     is_remember=False,
     need_to_hash=True,
-) -> LoginInfo:
+):
     if need_to_hash:
         password = hash_password(password)
 
@@ -172,7 +183,7 @@ async def login_async(
         "/services/security/login",
         json=dict(login=login, password=password, isRemember=is_remember),
     )
-    return _parse(client, r)
+    return _parse(client, r, is_remember=is_remember)
 
 
 def login_sync(
@@ -181,7 +192,7 @@ def login_sync(
     password: str,
     is_remember=False,
     need_to_hash=True,
-) -> LoginInfo:
+) -> Union[LoginInfoTemp, LoginInfoPerm]:
     if need_to_hash:
         password = hash_password(password)
 
@@ -189,22 +200,32 @@ def login_sync(
         "/services/security/login",
         json=dict(login=login, password=password, isRemember=is_remember),
     )
-    return _parse(client, r)
+    return _parse(client, r, is_remember=is_remember)
 
 
 class AsyncLoginMethod:
-    async def login(self: AsyncASURSO, isRemember=False):
+    @overload
+    async def login(self: AsyncASURSO) -> LoginInfoTemp: ...
+    @overload
+    async def login(self: AsyncASURSO, is_remember: Literal[False]) -> LoginInfoTemp: ...
+    @overload
+    async def login(self: AsyncASURSO, is_remember: Literal[True]) -> LoginInfoPerm: ...
+    async def login(self: AsyncASURSO, is_remember=False):
         result = await login_async(
-            self._client, self._login, self._password, isRemember, need_to_hash=False
+            self._client, self._login, self._password, is_remember, need_to_hash=False
         )
-        # format_output(self, result)
         return result
 
 
 class LoginMethod:
-    def login(self: ASURSO, isRemember=False):
+    @overload
+    def login(self: ASURSO) -> LoginInfoTemp: ...
+    @overload
+    def login(self: ASURSO, is_remember: Literal[False]) -> LoginInfoTemp: ...
+    @overload
+    def login(self: ASURSO, is_remember: Literal[True]) -> LoginInfoPerm: ...
+    def login(self: ASURSO, is_remember=False):
         result = login_sync(
-            self._client, self._login, self._password, isRemember, need_to_hash=False
+            self._client, self._login, self._password, is_remember, need_to_hash=False
         )
-        # format_output(self, result)
         return result
