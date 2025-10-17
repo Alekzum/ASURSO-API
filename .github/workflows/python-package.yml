@@ -45,15 +45,15 @@ jobs:
           ASURSO_SID: ${{ secrets.ASURSO_SID }}
 
       - name: Check NetSchool API
-        id: asurso-api
+        id: netschool-api
         run: gh api https://asurso.ru/
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
 
       - name: Test with pytest and NetSchool API
+        if: steps.netschool-api.outputs.diff && success()
         run: python -m pytest -m asyncio
-        continue-on-error: true
         env:
           ASURSO_LOGIN: ${{ secrets.ASURSO_LOGIN }}
           ASURSO_PASSWORD: ${{ secrets.ASURSO_PASSWORD }}
