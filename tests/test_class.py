@@ -1,10 +1,10 @@
-from . import async_asurso, sync_asurso, pytestmark, pytest, wrap_coro
+from . import async_asurso, sync_asurso, mark_asyncio, pytest, wrap_coro
 from asurso_api import enums, classes
 from typing import Union
 import datetime
 
 
-@pytestmark
+@mark_asyncio
 @pytest.mark.parametrize("asurso", [async_asurso, sync_asurso])
 async def test_login(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
     login_info = await wrap_coro(asurso.login(is_remember=False))
@@ -22,7 +22,7 @@ async def test_login(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
     assert login_info2.cookies_AspNetCoreSession is None
 
 
-@pytestmark
+@mark_asyncio
 @pytest.mark.parametrize("asurso", [async_asurso, sync_asurso])
 async def test_attestation(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
     attestation = await wrap_coro(asurso.get_attestation())
@@ -37,7 +37,7 @@ async def test_attestation(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
         break
 
 
-@pytestmark
+@mark_asyncio
 @pytest.mark.parametrize("asurso", [async_asurso, sync_asurso])
 async def test_chats(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
     chats = await wrap_coro(asurso.get_chats())
@@ -48,7 +48,7 @@ async def test_chats(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
         assert isinstance(chat, classes.Chat)
 
 
-@pytestmark
+@mark_asyncio
 @pytest.mark.parametrize("asurso", [async_asurso, sync_asurso])
 async def test_current_performance(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
     current_performance = await wrap_coro(asurso.get_current_performance())
@@ -61,7 +61,7 @@ async def test_current_performance(asurso: Union[classes.ASURSO, classes.AsyncAS
             assert isinstance(day.mark, str)
 
 
-@pytestmark
+@mark_asyncio
 @pytest.mark.parametrize("asurso", [async_asurso, sync_asurso])
 async def test_dashboard(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
     dashboard = await wrap_coro(asurso.get_dashboard())
@@ -69,7 +69,7 @@ async def test_dashboard(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
     assert isinstance(dashboard, classes.Dashboard)
 
 
-@pytestmark
+@mark_asyncio
 @pytest.mark.parametrize("asurso", [async_asurso, sync_asurso])
 async def test_group_attestation(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
     group_attestation = await wrap_coro(asurso.get_group_attestation())
@@ -77,7 +77,7 @@ async def test_group_attestation(asurso: Union[classes.ASURSO, classes.AsyncASUR
     assert isinstance(group_attestation, classes.GroupAttestation)
 
 
-@pytestmark
+@mark_asyncio
 @pytest.mark.parametrize("asurso", [async_asurso, sync_asurso])
 async def test_info(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
     info = await wrap_coro(asurso.get_info())
@@ -85,7 +85,7 @@ async def test_info(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
     assert isinstance(info, classes.Info)
 
 
-@pytestmark
+@mark_asyncio
 @pytest.mark.parametrize("asurso", [async_asurso, sync_asurso])
 async def test_lessons(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
     lessons = await wrap_coro(asurso.get_lessons())
@@ -96,7 +96,7 @@ async def test_lessons(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
         assert isinstance(lesson.date, datetime.date)
 
 
-@pytestmark
+@mark_asyncio
 @pytest.mark.parametrize("asurso", [async_asurso, sync_asurso])
 async def test_organization(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
     organization = await wrap_coro(asurso.get_organization())
@@ -104,7 +104,7 @@ async def test_organization(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
     assert isinstance(organization, classes.Organization)
 
 
-@pytestmark
+@mark_asyncio
 @pytest.mark.parametrize("asurso", [async_asurso, sync_asurso])
 async def test_enum_lessons(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
     lessons = await wrap_coro(asurso.get_lessons(enums.LessonsPeriod.NEXT_DAY))
@@ -116,7 +116,7 @@ async def test_enum_lessons(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
     print(f"Lessons for next day: {lessons}")
 
 
-@pytestmark
+@mark_asyncio
 @pytest.mark.parametrize("asurso", [async_asurso, sync_asurso])
 async def test_logout(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
     logout_success = await wrap_coro(asurso.logout())
@@ -124,7 +124,7 @@ async def test_logout(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
     assert isinstance(logout_success, bool)
 
 
-@pytestmark
+@mark_asyncio
 @pytest.mark.parametrize("asurso", [async_asurso, sync_asurso])
 async def test_context(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
     async with async_asurso:

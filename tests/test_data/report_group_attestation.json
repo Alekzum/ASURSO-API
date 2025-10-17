@@ -1,0 +1,24 @@
+{
+    "termType": "Semester",
+    "termNumber": 1,
+    "year": 223,
+    "students": [{"firstName": "Foo", "lastName": "Foo", "middleName": "Foo", "id": 223}],
+    "subjects": [
+        {"examinationType": "DifferentiatedTest", "teacher": {"firstName": "Foo", "lastName": "Foo", "middleName": "Foo", "id": 223}, "marks": {"223": {}}, "name": "Foo", "id": 223},
+        {"examinationType": "DifferentiatedTest", "teacher": {"firstName": "Foo", "lastName": "Foo", "middleName": "Foo", "id": 223}, "marks": {"223": {}}, "name": "Foo", "id": 223},
+        {"examinationType": "DifferentiatedTest", "teacher": {"firstName": "Foo", "lastName": "Foo", "middleName": "Foo", "id": 223}, "marks": {"223": {}}, "name": "Foo", "id": 223},
+        {"examinationType": "DifferentiatedTest", "marks": {"223": {}}, "name": "Foo", "id": 223},
+        {"examinationType": "DifferentiatedTest", "marks": {"223": {}}, "name": "Foo", "id": 223},
+        {"examinationType": "Exam", "marks": {"Foo": {}}, "name": "Foo", "id": 223},
+        {"examinationType": "DifferentiatedTest", "teacher": {"firstName": "Foo", "lastName": "Foo", "middleName": "Foo", "id": 223}, "marks": {"223": {}}, "name": "Foo", "id": 223},
+        {"examinationType": "DifferentiatedTest", "teacher": {"firstName": "Foo", "lastName": "Foo", "middleName": "Foo", "id": 223}, "marks": {"223": {}}, "name": "Foo", "id": 223},
+        {"examinationType": "DifferentiatedTest", "teacher": {"firstName": "Foo", "lastName": "Foo", "middleName": "Foo", "id": 223}, "marks": {"223": {}}, "name": "Foo", "id": 223},
+        {"examinationType": "DifferentiatedTest", "teacher": {"firstName": "Foo", "lastName": "Foo", "middleName": "Foo", "id": 223}, "marks": {"223": {}}, "name": "Foo", "id": 223},
+        {"examinationType": "DifferentiatedTest", "marks": {"223": {}}, "name": "Foo", "id": 223},
+        {"examinationType": "DifferentiatedTest", "marks": {"223": {}}, "name": "Foo", "id": 223},
+        {"examinationType": "Exam", "marks": {"223": {}}, "name": "Foo", "id": 223}
+    ],
+    "profModules": [{"marks": {}, "name": "Foo", "id": 223}],
+    "courseWorks": [{"marks": {"223": {}}, "name": "Foo", "id": 223}],
+    "departmentName": "Foo"
+}

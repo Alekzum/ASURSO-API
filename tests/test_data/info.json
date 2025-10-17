@@ -1,0 +1,22 @@
+{
+    "areChatsEnabled": true,
+    "availableLanguages": [{"key": "Русский", "value": "ru"}],
+    "defaultLanguage": "ru",
+    "educationMenu": {"isEnabled": true, "workingProgramsEnabled": true},
+    "foreignInstallation": {"isEnabled": false},
+    "importEncoding": "windows-1251",
+    "isAdministrationMenuEnabled": true,
+    "isEditStudentFactualHoursAvailableForOrganization": false,
+    "isEmploymentEnabled": false,
+    "isErnEnabled": false,
+    "isFactualHoursAvailableSystemwide": false,
+    "isFileStorageAvailable": true,
+    "isOrgDetailsEnabled": true,
+    "isOrgLicenseEnabled": true,
+    "isPortfolioMenuEnabled": true,
+    "isReportsMenuEnabled": true,
+    "isSupplementaryEducationCertificatesAvailable": false,
+    "lessonsMenu": {"courseworksEnabled": true, "examinationEnabled": true, "isEnabled": true, "profModuleExaminationEnabled": true, "sessionTableEnabled": true},
+    "title": [{"language_code": "ru", "value": "АСУ РСО"}, {"language_code": "tg", "value": "АСУ РСО"}, {"language_code": "en", "value": "NetCity. Education"}],
+    "usersMenu": {"departmentsEnabled": true, "enrolleesEnabled": true, "expelledStudentsEnabled": true, "isEnabled": true, "parentsEnabled": true}
+}

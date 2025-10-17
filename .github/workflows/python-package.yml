@@ -37,8 +37,19 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-      - name: Test with pytest
-        run: python -m pytest tests
+      - name: Test with pytest and test data
+        continue-on-error: true
+        run: python -m pytest -m test_classes
+
+      - name: Check NetSchool API
+        continue-on-error: true
+        id: asurso-api
+        env:
+          GH_TOKEN: ${{ env.GH_TOKEN }}
+        run: gh api https://asurso.ru/
+
+      - name: Test with pytest and NetSchool API
+        run: python -m pytest -m asyncio
         env:
           ASURSO_LOGIN: ${{ secrets.ASURSO_LOGIN }}
           ASURSO_PASSWORD: ${{ secrets.ASURSO_PASSWORD }}

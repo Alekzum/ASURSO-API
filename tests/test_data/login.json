@@ -1,0 +1,68 @@
+{
+    "__cookie__UID": "Foo",
+    "installName": "Foo",
+    "localNetwork": false,
+    "tenantName": "spo_100",
+    "tenants": {
+        "spo_100": {
+            "firstName": "Foo",
+            "isTrusted": false,
+            "lastName": "Foo",
+            "middleName": "Foo",
+            "settings": {
+                "organization": {
+                    "abbreviation": "Foo",
+                    "actualAddress": "Foo",
+                    "additionalName": "Foo",
+                    "address": {"kladr": "Foo", "mailAddress": "Foo", "region": "Foo", "settlement": "Foo"},
+                    "administration": {
+                        "attestation": {"isEnabled": true},
+                        "eService": {"cacheEnrolleeListTimeout": 223, "cacheEnrolleeTimeout": 223, "cacheSpecialtyListTimeout": 223, "isEnabled": true, "url": "Foo", "useRestIntegration": true},
+                        "factHours": {"isEnabled": false},
+                        "organizationId": "Foo",
+                        "vkChats": {"communityId": "223", "communityToken": "Foo"}
+                    },
+                    "bankingDetails": {
+                        "founders": "Foo",
+                        "founderType": "223",
+                        "inn": "223",
+                        "kpp": "223",
+                        "ogrn": "223",
+                        "okato": "223",
+                        "okogu": "223",
+                        "okopth": "223",
+                        "okpo": "223",
+                        "okths": "223",
+                        "oktmo": "223",
+                        "okved": "22.02.23",
+                        "others": "Foo"
+                    },
+                    "directorName": "Foo",
+                    "directorPosition": "Foo",
+                    "email": "Foo",
+                    "entrepreneurName": "Foo",
+                    "fax": "Foo",
+                    "headOrganizationName": "Foo",
+                    "isEntrepreneurOwned": false,
+                    "isSubdepartment": false,
+                    "legalAddress": "Foo",
+                    "legalStatus": "StateFinanced",
+                    "name": "Foo",
+                    "occupancy": 223,
+                    "organizationDeptId": 1,
+                    "organizationId": "Foo",
+                    "organizationStatus": "Function",
+                    "organizationType": "Spo",
+                    "phone": "Foo",
+                    "rosobrId": "Foo",
+                    "shiftCount": 223,
+                    "shortName": "Foo",
+                    "site": "Foo",
+                    "studyUnitNumber": "",
+                    "type": "Poo"
+                }
+            },
+            "studentRole": {"id": 223, "studentGroupId": 223, "students": [{"firstName": "Foo", "groupId": 223, "groupName": "Foo", "id": 223, "lastName": "Foo", "middleName": "Foo"}]}
+        }
+    }
+}

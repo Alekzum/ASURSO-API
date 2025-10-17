@@ -50,13 +50,12 @@ class Classroom(BaseModel):
         if info.field_name == "raw_building":
             if (
                 info.data.get("buildingName", None)
-                and info.data.get("buildingId", None) is None
-            ):
+                and info.data.get("buildingId", None)
+            ) is None:
                 return value
             elif (
-                info.data.get("buildingName", None)
-                or info.data.get("buildingId", None) is not None
-            ):
+                info.data.get("buildingName", None) or info.data.get("buildingId", None)
+            ) is not None:
                 raise ValueError(
                     "Fields buildingName and buildingId is already provided! "
                     "Only use fields 'buildingName' and 'buildingID' or 'building'"
@@ -70,7 +69,9 @@ class Classroom(BaseModel):
                 "Only use fields 'buildingName' and 'buildingID' or 'building'"
             )
 
-        raise ValueError(f"wtf, field_name={info.field_name}")
+        raise ValueError(
+            f"Didn't found other fields with building, current field_name={info.field_name!r}"
+        )
 
     def humanize(self):
         return f"<Кабинет {self.name} в корпусе {self.building}>"
