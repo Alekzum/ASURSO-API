@@ -38,19 +38,22 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
       - name: Test with pytest and test data
-        continue-on-error: true
         run: python -m pytest -m test_classes
+        env:
+          ASURSO_LOGIN: ${{ secrets.ASURSO_LOGIN }}
+          ASURSO_PASSWORD: ${{ secrets.ASURSO_PASSWORD }}
+          ASURSO_SID: ${{ secrets.ASURSO_SID }}
 
       - name: Check NetSchool API
-        continue-on-error: true
         id: asurso-api
+        run: gh api https://asurso.ru/
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh api https://asurso.ru/
 
       - name: Test with pytest and NetSchool API
-        continue-on-error: true
         run: python -m pytest -m asyncio
+        continue-on-error: true
         env:
           ASURSO_LOGIN: ${{ secrets.ASURSO_LOGIN }}
           ASURSO_PASSWORD: ${{ secrets.ASURSO_PASSWORD }}
