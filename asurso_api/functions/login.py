@@ -1,6 +1,6 @@
 from ..utils import hash_password, parse_response, MyAsyncClient, MyClient
-from pydantic import BaseModel, Field
-from typing import Protocol, List, Union, Optional, overload, Literal
+from pydantic import BaseModel, Field, field_validator, ValidationInfo
+from typing import Protocol, List, Union, overload, Literal, Dict
 from httpx import Response
 import logging
 
@@ -135,16 +135,20 @@ class Spo(BaseModel):
     student_role: StudentRole = Field(..., alias="studentRole")
 
 
-class Tenants(BaseModel):
-    spo_50: Spo
-
-
 class LoginInfo(BaseModel):
     cookies_UID: str = Field(..., alias="__cookie__UID")
     install_name: str = Field(..., alias="installName")
     local_network: bool = Field(..., alias="localNetwork")
     tenant_name: str = Field(..., alias="tenantName")
-    tenants: Tenants
+    tenants: Dict[str, Spo] = Field(...)
+    """Dict with key(s) matching `spo_\\d+`. 
+    Its better to use with `tenant_name` to get `Spo` object """
+
+    @field_validator("tenants")
+    def validate_tenants(cls, tenants):
+        if any(not(x.startswith("spo_") and x[4:].isdigit()) for x in tenants):
+            raise ValueError(f"Found not \"spo_\\d+\" key in tenants")
+        return tenants
 
 
 class LoginInfoPerm(LoginInfo):
@@ -158,7 +162,9 @@ class LoginInfoTemp(LoginInfo):
 
 
 def _format_output(client: Union[MyAsyncClient, MyClient], result: LoginInfo) -> None:
-    SID = result.tenants.model_dump()[result.tenant_name]["student_role"]["id"]
+    tenant_name = result.tenant_name
+    tenant = result.tenants[tenant_name]
+    SID = tenant.student_role.id
     client._SID = str(SID)
 
 

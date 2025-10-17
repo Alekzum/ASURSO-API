@@ -7,18 +7,19 @@ import datetime
 @pytestmark
 @pytest.mark.parametrize("asurso", [async_asurso, sync_asurso])
 async def test_login(asurso: Union[classes.ASURSO, classes.AsyncASURSO]):
-    login_success = await wrap_coro(asurso.login(is_remember=False))
+    login_info = await wrap_coro(asurso.login(is_remember=False))
+    assert isinstance(login_info.tenant_name, str)
+    assert isinstance(login_info.tenants[login_info.tenant_name], classes.login.Spo)
     
-    assert isinstance(login_success, classes.LoginInfoTemp)
-    assert isinstance(login_success.cookies_UID, str)
-    assert login_success.cookies_AspNetCoreCookies is None
-    assert isinstance(login_success.cookies_AspNetCoreSession, str)
+    assert isinstance(login_info, classes.LoginInfoTemp)
+    assert isinstance(login_info.cookies_UID, str)
+    assert login_info.cookies_AspNetCoreCookies is None
+    assert isinstance(login_info.cookies_AspNetCoreSession, str)
 
-    login_success2 = await wrap_coro(asurso.login(is_remember=True))
-    assert isinstance(login_success2, classes.LoginInfoPerm)
-    assert isinstance(login_success2.cookies_UID, str)
-    assert isinstance(login_success2.cookies_AspNetCoreCookies, str)
-    assert login_success2.cookies_AspNetCoreSession is None
+    login_info2 = await wrap_coro(asurso.login(is_remember=True))
+    assert isinstance(login_info2, classes.LoginInfoPerm)
+    assert isinstance(login_info2.cookies_AspNetCoreCookies, str)
+    assert login_info2.cookies_AspNetCoreSession is None
 
 
 @pytestmark
