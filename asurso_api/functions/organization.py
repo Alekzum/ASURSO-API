@@ -1,30 +1,16 @@
 from ..utils import parse_response, MyAsyncClient, MyClient
+from ..typing import AsyncASURSO, ASURSO
 from pydantic import BaseModel, Field
-from typing import Protocol
 import logging
 
 
 logger = logging.getLogger(__name__)
 
 
-class AsyncASURSO(Protocol):
-    _SID: str
-    _login: str
-    _password: str
-    _client: MyAsyncClient
-
-
-class ASURSO(Protocol):
-    _SID: str
-    _login: str
-    _password: str
-    _client: MyClient
-
-
 class Address(BaseModel):
     region: str
     settlement: str
-    mail_address: str = Field(..., alias='mailAddress')
+    mail_address: str = Field(..., alias="mailAddress")
     kladr: str
 
 
@@ -39,39 +25,39 @@ class BankingDetails(BaseModel):
     okpo: str
     others: str
     okogu: str
-    founder_type: str = Field(..., alias='founderType')
+    founder_type: str = Field(..., alias="founderType")
     founders: str
     okato: str
 
 
 class EService(BaseModel):
     url: str
-    is_enabled: bool = Field(..., alias='isEnabled')
-    cache_enrollee_list_timeout: int = Field(..., alias='cacheEnrolleeListTimeout')
-    cache_specialty_list_timeout: int = Field(..., alias='cacheSpecialtyListTimeout')
-    cache_enrollee_timeout: int = Field(..., alias='cacheEnrolleeTimeout')
-    use_rest_integration: bool = Field(..., alias='useRestIntegration')
+    is_enabled: bool = Field(..., alias="isEnabled")
+    cache_enrollee_list_timeout: int = Field(..., alias="cacheEnrolleeListTimeout")
+    cache_specialty_list_timeout: int = Field(..., alias="cacheSpecialtyListTimeout")
+    cache_enrollee_timeout: int = Field(..., alias="cacheEnrolleeTimeout")
+    use_rest_integration: bool = Field(..., alias="useRestIntegration")
 
 
 class Attestation(BaseModel):
-    is_enabled: bool = Field(..., alias='isEnabled')
+    is_enabled: bool = Field(..., alias="isEnabled")
 
 
 class FactHours(BaseModel):
-    is_enabled: bool = Field(..., alias='isEnabled')
+    is_enabled: bool = Field(..., alias="isEnabled")
 
 
 class VkChats(BaseModel):
-    community_id: str = Field(..., alias='communityId')
-    community_token: str = Field(..., alias='communityToken')
+    community_id: str = Field(..., alias="communityId")
+    community_token: str = Field(..., alias="communityToken")
 
 
 class Administration(BaseModel):
-    e_service: EService = Field(..., alias='eService')
-    organization_id: str = Field(..., alias='organizationId')
+    e_service: EService = Field(..., alias="eService")
+    organization_id: str = Field(..., alias="organizationId")
     attestation: Attestation
-    fact_hours: FactHours = Field(..., alias='factHours')
-    vk_chats: VkChats = Field(..., alias='vkChats')
+    fact_hours: FactHours = Field(..., alias="factHours")
+    vk_chats: VkChats = Field(..., alias="vkChats")
 
 
 class Organization(BaseModel):
@@ -116,11 +102,11 @@ def get_organization_sync(client: MyClient) -> Organization:
     return parse_response(r, Organization)
 
 
-class AsyncGetOrganizationMethod:
+class AsyncGetOrganizationMethod(AsyncASURSO):
     async def get_organization(self: AsyncASURSO):
         return await get_organization_async(self._client)
 
 
-class GetOrganizationMethod:
+class GetOrganizationMethod(ASURSO):
     def get_organization(self: ASURSO):
         return get_organization_sync(self._client)

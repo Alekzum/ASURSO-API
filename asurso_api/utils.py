@@ -134,7 +134,7 @@ def parse_response(
 ) -> Union[T, List[T]]:
     check_for_errors(r)
     data = r.json()
-    for (cookie_name, cookie_value) in dict(r.cookies).items():
+    for cookie_name, cookie_value in dict(r.cookies).items():
         data[f"__cookie__{cookie_name}"] = cookie_value
     logger.debug(f"{r.url=}, {data=}")
 

@@ -1,24 +1,11 @@
 from ..utils import parse_response, MyAsyncClient, MyClient
-from typing import Protocol, List
+from ..typing import AsyncASURSO, ASURSO
+from typing import List
 from pydantic import BaseModel, Field
 import logging
 
 
 logger = logging.getLogger(__name__)
-
-
-class AsyncASURSO(Protocol):
-    _SID: str
-    _login: str
-    _password: str
-    _client: MyAsyncClient
-
-
-class ASURSO(Protocol):
-    _SID: str
-    _login: str
-    _password: str
-    _client: MyClient
 
 
 class TitleItem(BaseModel):
@@ -101,11 +88,11 @@ def get_info_sync(client: MyClient) -> Info:
     return parse_response(r, Info)
 
 
-class AsyncGetInfoMethod:
+class AsyncGetInfoMethod(AsyncASURSO):
     async def get_info(self: AsyncASURSO) -> Info:
         return await get_info_async(self._client)
 
 
-class GetInfoMethod:
+class GetInfoMethod(ASURSO):
     def get_info(self: ASURSO) -> Info:
         return get_info_sync(self._client)

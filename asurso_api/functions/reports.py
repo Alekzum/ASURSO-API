@@ -1,22 +1,9 @@
-from .. import enums
 from ..utils import parse_response, MyAsyncClient, MyClient
-from typing import List, Optional, Protocol, Union
+from ..typing import AsyncASURSO, ASURSO
+from .. import enums
+from typing import List, Optional, Union
 from pydantic import BaseModel, Field, computed_field
 import datetime
-
-
-class AsyncASURSO(Protocol):
-    _SID: str
-    _login: str
-    _password: str
-    _client: MyAsyncClient
-
-
-class ASURSO(Protocol):
-    _SID: str
-    _login: str
-    _password: str
-    _client: MyClient
 
 
 # Current performance
@@ -161,7 +148,7 @@ def get_group_attestation_sync(client: MyClient) -> GroupAttestation:
     return parse_response(r, GroupAttestation)
 
 
-class AsyncGetReportMethods:
+class AsyncGetReportMethods(AsyncASURSO):
     async def get_current_performance(self: AsyncASURSO):
         return await get_current_performance_async(self._client)
 
@@ -169,7 +156,7 @@ class AsyncGetReportMethods:
         return await get_group_attestation_async(self._client)
 
 
-class GetReportMethods:
+class GetReportMethods(ASURSO):
     def get_current_performance(self: ASURSO):
         return get_current_performance_sync(self._client)
 

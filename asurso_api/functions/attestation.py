@@ -1,25 +1,12 @@
 from ..utils import parse_response, MyAsyncClient, MyClient
+from ..typing import AsyncASURSO, ASURSO
 from .. import enums
-from typing import List, Optional, Protocol, Dict
+from typing import List, Optional, Dict
 from pydantic import BaseModel, Field
 import logging
 
 
 logger = logging.getLogger(__name__)
-
-
-class AsyncASURSO(Protocol):
-    _SID: str
-    _login: str
-    _password: str
-    _client: MyAsyncClient
-
-
-class ASURSO(Protocol):
-    _SID: str
-    _login: str
-    _password: str
-    _client: MyClient
 
 
 class Term(BaseModel):
@@ -56,7 +43,7 @@ class Marks(BaseModel):
 class Subject(BaseModel):
     name: str
     marks: Marks
-    final_mark: FinalMark = Field(..., alias='finalMark')
+    final_mark: FinalMark = Field(..., alias="finalMark")
 
 
 class Attestation(BaseModel):
@@ -74,11 +61,11 @@ def get_attestation_sync(client: MyClient) -> Attestation:
     return parse_response(r, Attestation)
 
 
-class AsyncGetAttestationMethod:
+class AsyncGetAttestationMethod(AsyncASURSO):
     async def get_attestation(self: AsyncASURSO) -> Attestation:
         return await get_attestation_async(self._client)
 
 
-class GetAttestationMethod:
+class GetAttestationMethod(ASURSO):
     def get_attestation(self: ASURSO) -> Attestation:
         return get_attestation_sync(self._client)

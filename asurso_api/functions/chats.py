@@ -1,25 +1,12 @@
 from ..utils import parse_response, MyAsyncClient, MyClient
+from ..typing import AsyncASURSO, ASURSO
 from .. import enums
 from pydantic import BaseModel, Field
-from typing import Protocol, List
+from typing import List
 import logging
 
 
 logger = logging.getLogger(__name__)
-
-
-class AsyncASURSO(Protocol):
-    _SID: str
-    _login: str
-    _password: str
-    _client: MyAsyncClient
-
-
-class ASURSO(Protocol):
-    _SID: str
-    _login: str
-    _password: str
-    _client: MyClient
 
 
 class Chat(BaseModel):
@@ -41,11 +28,11 @@ def get_chats_sync(client: MyClient) -> List[Chat]:
     return parse_response(r, [Chat])
 
 
-class AsyncGetChatsMethod:
+class AsyncGetChatsMethod(AsyncASURSO):
     async def get_chats(self: AsyncASURSO) -> List[Chat]:
         return await get_chats_async(self._client)
 
 
-class GetChatsMethod:
+class GetChatsMethod(ASURSO):
     def get_chats(self: ASURSO) -> List[Chat]:
         return get_chats_sync(self._client)

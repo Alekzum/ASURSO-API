@@ -1,5 +1,6 @@
 from ..utils import MyAsyncClient, MyClient
-from typing import Protocol, Union
+from ..typing import AsyncASURSO, ASURSO
+from typing import Union
 from httpx import Response
 import logging
 
@@ -7,22 +8,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class AsyncASURSO(Protocol):
-    _SID: str
-    _login: str
-    _password: str
-    _client: MyAsyncClient
-
-
-class ASURSO(Protocol):
-    _SID: str
-    _login: str
-    _password: str
-    _client: MyClient
-
-
 def _parse(client: Union[MyAsyncClient, MyClient], r: Response):
-    client.cookies.update(r.cookies)
+    client.headers.clear()
+    client.cookies.clear()
+    # client.cookies.update(r.cookies)
 
     if r.status_code != 200:
         logger.error(f"{r=}, {r.text=}, {r.status_code=}")
@@ -40,11 +29,15 @@ def logout_sync(client: MyClient) -> bool:
     return _parse(client, r)
 
 
-class AsyncLogoutMethod:
+class AsyncLogoutMethod(AsyncASURSO):
     async def logout(self: AsyncASURSO):
-        return await logout_async(self._client)
+        r = await logout_async(self._client)
+        self._logged = False
+        return r
 
 
-class LogoutMethod:
+class LogoutMethod(ASURSO):
     def logout(self: ASURSO):
-        return logout_sync(self._client)
+        r = logout_sync(self._client)
+        self._logged = False
+        return r
