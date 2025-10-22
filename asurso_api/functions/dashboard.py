@@ -1,24 +1,11 @@
 from ..utils import parse_response, MyAsyncClient, MyClient
-from typing import List, Protocol
+from ..typing import AsyncASURSO, ASURSO
+from typing import List
 from pydantic import BaseModel
 import logging
 
 
 logger = logging.getLogger(__name__)
-
-
-class AsyncASURSO(Protocol):
-    _SID: str
-    _login: str
-    _password: str
-    _client: MyAsyncClient
-
-
-class ASURSO(Protocol):
-    _SID: str
-    _login: str
-    _password: str
-    _client: MyClient
 
 
 class Subject(BaseModel):
@@ -41,11 +28,11 @@ def get_dashboard_sync(client: MyClient) -> Dashboard:
     return parse_response(r, Dashboard)
 
 
-class AsyncGetDashboardMethod:
+class AsyncGetDashboardMethod(AsyncASURSO):
     async def get_dashboard(self: AsyncASURSO) -> Dashboard:
         return await get_dashboard_async(self._client)
 
 
-class GetDashboardMethod:
+class GetDashboardMethod(ASURSO):
     def get_dashboard(self: ASURSO) -> Dashboard:
         return get_dashboard_sync(self._client)

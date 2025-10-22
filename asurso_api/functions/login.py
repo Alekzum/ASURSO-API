@@ -1,25 +1,12 @@
 from ..utils import hash_password, parse_response, MyAsyncClient, MyClient
-from pydantic import BaseModel, Field, field_validator, ValidationInfo
-from typing import Protocol, List, Union, overload, Literal, Dict
+from ..typing import AsyncASURSO, ASURSO
+from pydantic import BaseModel, Field, field_validator
+from typing import List, Union, overload, Literal, Dict, Optional
 from httpx import Response
 import logging
 
 
 logger = logging.getLogger(__name__)
-
-
-class AsyncASURSO(Protocol):
-    _SID: str
-    _login: str
-    _password: str
-    _client: MyAsyncClient
-
-
-class ASURSO(Protocol):
-    _SID: str
-    _login: str
-    _password: str
-    _client: MyClient
 
 
 class Address(BaseModel):
@@ -146,8 +133,8 @@ class LoginInfo(BaseModel):
 
     @field_validator("tenants")
     def validate_tenants(cls, tenants):
-        if any(not(x.startswith("spo_") and x[4:].isdigit()) for x in tenants):
-            raise ValueError(f"Found not \"spo_\\d+\" key in tenants")
+        if any(not (x.startswith("spo_") and x[4:].isdigit()) for x in tenants):
+            raise ValueError('Found not "spo_\\d+" key in tenants')
         return tenants
 
 
@@ -170,18 +157,26 @@ def _format_output(client: Union[MyAsyncClient, MyClient], result: LoginInfo) ->
 
 def _parse(client: Union[MyClient, MyAsyncClient], r: Response, is_remember: bool):
     client.cookies.update(r.cookies)
-    result = parse_response(r, LoginInfoPerm if is_remember else LoginInfoTemp)
+    t = LoginInfoPerm if is_remember else LoginInfoTemp
+    try:
+        result = parse_response(r, t)
+    except Exception:
+        print(r, t)
+        raise
     _format_output(client, result)
     return result
 
 
 async def login_async(
     client: MyAsyncClient,
-    login: str,
-    password: str,
+    login: Optional[str] = None,
+    password: Optional[str] = None,
     is_remember=False,
     need_to_hash=True,
+    cookie: bool = False,
 ):
+    if login is None or password is None:
+        raise ValueError("Login and passwords need to be provided!")
     if need_to_hash:
         password = hash_password(password)
 
@@ -209,21 +204,31 @@ def login_sync(
     return _parse(client, r, is_remember=is_remember)
 
 
-class AsyncLoginMethod:
+class AsyncLoginMethod(AsyncASURSO):
     @overload
     async def login(self: AsyncASURSO) -> LoginInfoTemp: ...
     @overload
-    async def login(self: AsyncASURSO, is_remember: Literal[False]) -> LoginInfoTemp: ...
+    async def login(
+        self: AsyncASURSO, is_remember: Literal[False]
+    ) -> LoginInfoTemp: ...
     @overload
     async def login(self: AsyncASURSO, is_remember: Literal[True]) -> LoginInfoPerm: ...
     async def login(self: AsyncASURSO, is_remember=False):
+        if self._logged:
+            raise TypeError("Already logged in")
+
         result = await login_async(
-            self._client, self._login, self._password, is_remember, need_to_hash=False
+            self._client,
+            self._login,
+            self._password,
+            is_remember,
+            need_to_hash=False,
         )
+        self._logged = True
         return result
 
 
-class LoginMethod:
+class LoginMethod(ASURSO):
     @overload
     def login(self: ASURSO) -> LoginInfoTemp: ...
     @overload
@@ -231,7 +236,15 @@ class LoginMethod:
     @overload
     def login(self: ASURSO, is_remember: Literal[True]) -> LoginInfoPerm: ...
     def login(self: ASURSO, is_remember=False):
+        if self._logged:
+            raise TypeError("Already logged in")
+
         result = login_sync(
-            self._client, self._login, self._password, is_remember, need_to_hash=False
+            self._client,
+            self._login,
+            self._password,
+            is_remember,
+            need_to_hash=False,
         )
+        self._logged = True
         return result

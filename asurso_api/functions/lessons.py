@@ -1,33 +1,19 @@
 from ..utils import parse_response, MyAsyncClient, MyClient, range_to_dates
+from ..typing import AsyncASURSO, ASURSO
+from .. import enums
 from typing import (
     List,
     Optional,
-    Protocol,
     Union,
     TypeVar,
 )
 from pydantic import BaseModel, Field, computed_field, field_validator, ValidationInfo
-from .. import enums
 import datetime
 import logging
 
 
 logger = logging.getLogger(__name__)
 T = TypeVar("T", datetime.datetime, None)
-
-
-class AsyncASURSO(Protocol):
-    _SID: str
-    _login: str
-    _password: str
-    _client: MyAsyncClient
-
-
-class ASURSO(Protocol):
-    _SID: str
-    _login: str
-    _password: str
-    _client: MyClient
 
 
 class Classroom(BaseModel):
@@ -190,7 +176,7 @@ def get_lessons_sync(
     return parse_response(r, [LessonsDay])
 
 
-class AsyncGetLessonsMethod:
+class AsyncGetLessonsMethod(AsyncASURSO):
     async def get_lessons(
         self: AsyncASURSO,
         start: Union[
@@ -204,7 +190,7 @@ class AsyncGetLessonsMethod:
         )
 
 
-class GetLessonsMethod:
+class GetLessonsMethod(ASURSO):
     def get_lessons(
         self: ASURSO,
         start: Union[

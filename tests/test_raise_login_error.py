@@ -1,7 +1,7 @@
 from . import async_asurso, sync_asurso, mark_asyncio, pytest, wrap_coro
 from asurso_api import exceptions, classes
 from typing import Union
-import datetime
+
 
 @mark_asyncio
 @pytest.mark.parametrize("asurso", [async_asurso, sync_asurso])

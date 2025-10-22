@@ -7,7 +7,7 @@ import datetime
 def test_login():
     login_info_raw = get_test_data("login")
     login_info = classes.LoginInfo.model_validate(login_info_raw)
-    
+
     assert isinstance(login_info.tenant_name, str)
     assert isinstance(login_info.tenants[login_info.tenant_name], classes.login.Spo)
 
@@ -35,7 +35,9 @@ def test_chats():
 @mark_test_class
 def test_current_performance():
     current_performance_raw = get_test_data("report_current_performance")
-    current_performance = classes.CurrentPerformance.model_validate(current_performance_raw)
+    current_performance = classes.CurrentPerformance.model_validate(
+        current_performance_raw
+    )
 
     for days in current_performance.days_with_marks_for_subject:
         for day in days.days_with_marks:
@@ -46,13 +48,13 @@ def test_current_performance():
 @mark_test_class
 def test_dashboard():
     dashboard_raw = get_test_data("dashboard")
-    dashboard = classes.Dashboard.model_validate(dashboard_raw)
+    classes.Dashboard.model_validate(dashboard_raw)
 
 
 @mark_test_class
 def test_group_attestation():
     group_attestation_raw = get_test_data("report_group_attestation")
-    group_attestation = classes.GroupAttestation.model_validate(group_attestation_raw)
+    classes.GroupAttestation.model_validate(group_attestation_raw)
 
 
 @mark_test_class
@@ -64,7 +66,7 @@ def test_info():
 @mark_test_class
 def test_lessons():
     lessons_raw = get_test_data("lessons")
-    
+
     for lesson_raw in lessons_raw:
         lesson = classes.LessonsDay.model_validate(lesson_raw)
         assert isinstance(lesson.date, datetime.date)
@@ -73,4 +75,4 @@ def test_lessons():
 @mark_test_class
 def test_organization():
     organization_raw = get_test_data("organization")
-    organization = classes.Organization.model_validate(organization_raw)
+    classes.Organization.model_validate(organization_raw)
